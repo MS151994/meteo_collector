@@ -1,0 +1,23 @@
+import "reflect-metadata";
+import { createExpressServer, useContainer } from "routing-controllers";
+import { container } from "./infrastructure/ioc/Container";
+import { MeteorologicController } from "./controllers/MeteorologicController";
+import { Logger } from "winston";
+import { TYPES } from "./infrastructure/ioc/Types";
+
+useContainer(container);
+
+const logger = container.get<Logger>(TYPES.Logger);
+
+const app = createExpressServer({
+  controllers: [MeteorologicController],
+  defaults: {
+    undefinedResultCode: 404,
+  },
+});
+
+app.listen(process.env.PORT || 8080, () => {
+  logger.info(
+    `Meteorologic Collector listen on port ${process.env.PORT || 8080}`,
+  );
+});

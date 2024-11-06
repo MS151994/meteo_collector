@@ -1,11 +1,10 @@
 import {WarningPayload} from "./WarningPayload";
 import {Type} from "class-transformer";
 import {IsDate, IsString} from "class-validator";
-import {Territory} from "../infrastructure/types/territory";
 
 export class WarningsResponsePayload {
   @IsString()
-  public location: Territory;
+  public location: string = "";
 
   @IsString()
   public eventName: string = "";
@@ -22,12 +21,12 @@ export class WarningsResponsePayload {
   @Type(() => WarningPayload)
   public warnings: WarningPayload[];
 
-  public constructor(
-    location: string | number,
-    warningPayload: WarningPayload[],
-  ) {
-    this.location = location;
+  public constructor(warningPayload: WarningPayload[]) {
     this.warnings = warningPayload;
+  }
+
+  public setLocation(location: string) {
+    this.location = location;
   }
 
   public setEventsName(name: string) {

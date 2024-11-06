@@ -14,12 +14,28 @@ export class LocationHelper {
       return location;
     }
     if (location in TerritoryEnum) {
-      return String(TerritoryEnum[location as keyof typeof TerritoryEnum]);
+      return Number(TerritoryEnum[location as keyof typeof TerritoryEnum]);
     }
-    this.logger.warn(
-      `Not found location ID for given ${location}, please check input or update enum file`,
-    );
 
     return `Location ID for '${location}' not found`;
+  }
+
+  public getLocationName(location: Territory): string {
+    let territory = location;
+    if (typeof location === "string") {
+      if (!(location in TerritoryEnum)) {
+        territory = `Not found location for given territory: ${location}`;
+      }
+    } else {
+      const entry = Object.entries(TerritoryEnum).find(
+        ([key, value]) => value === String(location),
+      );
+
+      territory = entry
+        ? entry[0]
+        : `Not found location for given id: ${location}`;
+    }
+
+    return String(territory);
   }
 }

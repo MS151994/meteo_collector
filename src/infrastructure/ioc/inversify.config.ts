@@ -4,7 +4,6 @@ import { TYPES } from "./Types";
 import { controllerModule } from "./ControllerModule";
 import winston, { Logger } from "winston";
 import { LoggerSettings } from "../logger/LoggerSettings";
-import { Parser } from "../../utils/Parser";
 import { HttpClient } from "../http/HttpClient";
 import { WarningRepository } from "../repository/WarningRepository";
 import { LocationHelper } from "../../helper/LocationHelper";
@@ -41,7 +40,4 @@ export const bind = (container: Container): void => {
   container
     .bind<Logger>(TYPES.Logger)
     .toConstantValue(winston.createLogger(LoggerSettings));
-
-  //Parser
-  container.bind<Parser>(TYPES.Parser).to(Parser).inSingletonScope();
 };

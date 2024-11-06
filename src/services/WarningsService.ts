@@ -28,15 +28,15 @@ export class WarningsService {
   ): Promise<WarningsResponsePayload> {
     const imgwWarnings = await this.getIMGWWarnings();
     const localWarnings = this.findWarningForLocation(imgwWarnings, territory);
-
     this.fillDuration(localWarnings);
+    const warnResponse = new WarningsResponsePayload(localWarnings);
 
-    const warnResponse = new WarningsResponsePayload(territory, localWarnings);
-
+    warnResponse.setLocation(this.locationHelper.getLocationName(territory));
     warnResponse.setEventsName(this.prepareEventsName(localWarnings));
-    warnResponse.setEstimatedEndTime(localWarnings[0].getDuration());
 
-    if (!localWarnings.length) {
+    if (localWarnings.length) {
+      warnResponse.setEstimatedEndTime(localWarnings[0].getDuration());
+    } else {
       this.logger.info(`Not found warnings for given location (${territory})`);
 
       warnResponse.setErrorMessage(

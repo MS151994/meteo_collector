@@ -23,31 +23,39 @@ export class WarningsService {
   @inject(TYPES.Logger)
   private readonly logger: Logger;
 
+  protected readonly prefix = "[WarningsService]";
+
   public async getLocalWarnings(
     territory: Territory,
   ): Promise<WarningsResponsePayload> {
     const imgwWarnings = await this.getIMGWWarnings();
-    const localWarnings = this.findWarningForLocation(imgwWarnings, territory);
-    this.fillDuration(localWarnings);
-    const warnResponse = new WarningsResponsePayload(localWarnings);
+    const localWarnings = this.getWarningForLocation(imgwWarnings, territory);
+    this.setDurationWarningsTime(localWarnings);
+    this.setWarningsStyles(localWarnings);
 
-    warnResponse.setLocation(this.locationHelper.getLocationName(territory));
-    warnResponse.setEventsName(this.prepareEventsName(localWarnings));
+    const warningsResponse = new WarningsResponsePayload(localWarnings);
+    warningsResponse.setLocation(
+      this.locationHelper.getLocationName(territory),
+    );
+    warningsResponse.setEventsName(this.setPhenomenonName(localWarnings));
+    warningsResponse.setEstimatedEndTime(
+      this.getDurationForMaxWarning(localWarnings),
+    );
 
-    if (localWarnings.length) {
-      warnResponse.setEstimatedEndTime(localWarnings[0].getDuration());
-    } else {
-      this.logger.info(`Not found warnings for given location (${territory})`);
+    if (!localWarnings.length) {
+      this.logger.warn(
+        `${this.prefix} Not found warnings for given location (${territory})`,
+      );
 
-      warnResponse.setErrorMessage(
-        `Not found warnings for given location (${territory})`,
+      warningsResponse.setErrorMessage(
+        `${this.prefix} Not found warnings for given location (${territory})`,
       );
     }
 
-    return warnResponse;
+    return warningsResponse;
   }
 
-  private findWarningForLocation(
+  private getWarningForLocation(
     warnings: IMGWWarningModel[],
     territory: Territory,
   ): WarningPayload[] {
@@ -60,19 +68,42 @@ export class WarningsService {
       .map((element) => new WarningPayload(element));
   }
 
-  private fillDuration(warningsForGivenLocation: WarningPayload[]) {
-    for (const warning of warningsForGivenLocation) {
+  private getDurationForMaxWarning(warnings: WarningPayload[]): string {
+    if (!warnings.length) {
+      return "Not available";
+    }
+
+    return warnings
+      .reduce((maxWarning, currentWarning) => {
+        return currentWarning.getLevel() > maxWarning.getLevel()
+          ? currentWarning
+          : maxWarning;
+      })
+      .getDuration();
+  }
+
+  private setDurationWarningsTime(warnings: WarningPayload[]): void {
+    this.logger.debug(`${this.prefix} Set duration times for each warnings`);
+    for (const warning of warnings) {
       warning.setEstimatedEndTime(
         this.timeHelper.getDurationTime(warning.getValidTo()),
       );
     }
   }
 
-  private prepareEventsName(warningsPayload: WarningPayload[]) {
+  private setWarningsStyles(warnings: WarningPayload[]): void {
+    this.logger.debug(`${this.prefix} Set styles for each warnings`);
+    for (const warning of warnings) {
+      warning.setStyle(warning.getLevel());
+    }
+  }
+
+  private setPhenomenonName(warnings: WarningPayload[]): string {
+    this.logger.debug(`${this.prefix} Set phenomenon name for each warnings`);
     let tmp = "";
-    if (warningsPayload.length) {
-      warningsPayload.map((warning: WarningPayload) => {
-        tmp += warning.getState() + ", ";
+    if (warnings.length) {
+      warnings.map((warning: WarningPayload) => {
+        tmp += warning.getPhenomenonName() + ", ";
       });
     }
 
@@ -80,6 +111,8 @@ export class WarningsService {
   }
 
   private async getIMGWWarnings(): Promise<IMGWWarningModel[]> {
+    this.logger.info(`${this.prefix} Fetch data form IMGW`);
+
     return this.warningRepository.get();
   }
 }

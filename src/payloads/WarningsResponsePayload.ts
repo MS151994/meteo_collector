@@ -7,7 +7,7 @@ export class WarningsResponsePayload {
   public location: string = "";
 
   @IsString()
-  public eventName: string = "";
+  public phenomenonName: string = "";
 
   @IsDate()
   public lastUpdate: Date = new Date();
@@ -30,7 +30,7 @@ export class WarningsResponsePayload {
   }
 
   public setEventsName(name: string) {
-    this.eventName = name;
+    this.phenomenonName = name;
   }
 
   public setErrorMessage(msg: string) {

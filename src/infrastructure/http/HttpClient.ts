@@ -9,6 +9,7 @@ import { HttpClientError } from "../errors/HttpClientError";
 export class HttpClient {
   @inject(TYPES.Logger)
   private readonly logger: Logger;
+  protected readonly prefix = "[HttpClient]";
 
   protected defaultOptions: Options = {
     followRedirect: false,
@@ -16,11 +17,11 @@ export class HttpClient {
     throwHttpErrors: true,
   };
 
-  protected readonly url =
-    "https://danepubliczne.imgw.pl/api/data/warningsmeteo";
+  protected readonly url = process.env.IMGW_API_URL;
 
   public async execute(): Promise<HttpResponseInterface> {
     try {
+      this.logger.debug(`${this.prefix} Trying to fetch data from ${this.url}`);
       let response: HttpResponseInterface = {};
 
       const res = (await got({
@@ -36,13 +37,17 @@ export class HttpClient {
       response.statusCode = res.statusCode;
       response.headers = res.headers;
 
+      this.logger.debug(
+        `${this.prefix} Successfully fetched data (${res.statusCode})`,
+      );
+
       return response;
     } catch (error: any) {
       this.logger.error(
-        `Request to IMGW meteo failed with code: ${error.code}`,
+        `${this.prefix} Request to IMGW meteo failed with code: ${error.code}`,
       );
       throw new HttpClientError(
-        `Request failed with code: ${error.code}`,
+        `${this.prefix} Request failed with code: ${error.code}`,
         error.code,
       );
     }

@@ -27,7 +27,7 @@ export class WarningRepository {
       return warnings;
     } catch (err) {
       this.logger.warn(
-        `Not found warnings in IMGW meteo. error: ${(err as Error).message}`,
+        `[WarningRepository] Not found warnings in IMGW meteorologic. error: ${(err as Error).message}, return empty array`,
       );
 
       return warnings;

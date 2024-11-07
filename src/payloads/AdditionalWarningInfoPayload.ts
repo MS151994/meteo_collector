@@ -5,11 +5,10 @@ export class AdditionalWarningInfoPayload {
   private readonly probability: number = 0;
   private readonly validTo: Date | null = null;
   private readonly validFrom: Date | null = null;
-  private estimatedEndTime: string = "";
+  private estimatedEndTime: string = "Not available";
   private readonly published: Date | null = null;
   private readonly content: string = "";
   private readonly comment: string = "";
-  private readonly color: string = "green";
 
   public constructor(payload?: IMGWWarningModel) {
     if (payload?.level) {
@@ -37,18 +36,6 @@ export class AdditionalWarningInfoPayload {
 
     if (payload?.comment) {
       this.comment = payload.comment;
-    }
-
-    if (payload?.level) {
-      if (payload.level === 3) {
-        this.color = "red";
-      } else if (payload.level === 2) {
-        this.color = "orange";
-      } else if (payload.level === 1) {
-        this.color = "yellow";
-      } else {
-        this.color = "green";
-      }
     }
   }
 

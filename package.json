@@ -1,7 +1,7 @@
 {
   "name": "meteocollector",
-  "version": "0.0.1",
-  "description": "Meteorological data collector from IMGW for homeassistant",
+  "version": "0.1.0",
+  "description": "Meteorological data collector from IMGW for HomeAssistant",
   "main": "index.js",
   "scripts": {
     "start:auto": "npm install --no-save && nodemon -e ts --watch ./src --exec 'npm run build && node --title=meteo_collector_api ./build/index.js'",
@@ -14,11 +14,17 @@
     "test:syntax": "npm run format && npm run lint",
     "test:syntax:fix": "npm run format && npm run lint -- --fix"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "meteorologic",
+    "IMGW",
+    "HomeAutomation",
+    "HomeAssistant"
+  ],
+  "author": "Maciej Stępień",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.10.0",
+    "@types/got": "^9.6.12",
     "@stylistic/eslint-plugin-ts": "^2.8.0",
     "@types/cors": "^2.8.17",
     "@types/eslint__js": "^8.42.3",
@@ -35,7 +41,6 @@
     "typescript-eslint": "^8.5.0"
   },
   "dependencies": {
-    "@types/got": "^9.6.12",
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

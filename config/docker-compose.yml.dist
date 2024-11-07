@@ -1,0 +1,17 @@
+services:
+  meteo_collector:
+    build: .
+    working_dir: /opt/meteo_collector
+    user: node
+    container_name: meteo-collector-api
+    command: npm run start:auto
+    ports:
+      - '8080:8080'
+    volumes:
+      - .:/opt/meteo_collector
+    environment:
+      - NODE_ENV=development
+      - IMGW_API_URL=https://danepubliczne.imgw.pl/api/data/warningsmeteo
+      - LOG_LEVEL=info
+      - ICON_LOCATION=
+      - ICON_EXTENSION=

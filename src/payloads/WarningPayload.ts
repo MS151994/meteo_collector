@@ -1,39 +1,49 @@
 import {AdditionalWarningInfoPayload} from "./AdditionalWarningInfoPayload";
 import {IMGWWarningModel} from "../models/WarningModel";
+import {WarningStyle} from "./WarningStyle";
 
 export class WarningPayload {
-  private state: string = "no warnings";
+  private phenomenonName: string = "no warnings";
   private readonly additionalInfo: AdditionalWarningInfoPayload =
     new AdditionalWarningInfoPayload();
+  private style: WarningStyle;
 
   public constructor(warning?: IMGWWarningModel) {
     if (warning?.eventName) {
-      this.state = warning.eventName;
+      this.phenomenonName = warning.eventName;
       this.additionalInfo = new AdditionalWarningInfoPayload(warning);
     }
   }
 
-  public getState() {
-    return this.state;
+  public setPhenomenonName(value: string) {
+    this.phenomenonName = value;
   }
 
-  public setState(value: string) {
-    this.state = value;
-  }
-
-  public getDuration() {
-    return this.additionalInfo.getEstimatedEndTime();
+  public setStyle(level: number) {
+    this.style = new WarningStyle(level);
   }
 
   public setEstimatedEndTime(estimatedEndTime: string) {
     this.additionalInfo.setEstimatedEndTime(estimatedEndTime);
   }
 
-  public getValidTo() {
+  public getDuration(): string {
+    return this.additionalInfo.getEstimatedEndTime();
+  }
+
+  public getValidTo(): Date | null {
     return this.additionalInfo.getValidToDate();
   }
 
-  public getValidFrom() {
+  public getValidFrom(): Date | null {
     return this.additionalInfo.getValidFromDate();
+  }
+
+  public getLevel(): number {
+    return this.additionalInfo.getLevel();
+  }
+
+  public getPhenomenonName(): string {
+    return this.phenomenonName;
   }
 }

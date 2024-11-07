@@ -8,19 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+### [0.1.0] - minimum valuable product
 ### Added
 
-- Location ENUM 
+- Location ENUM
 - Location Helper
+- Log level ENV
+- Log debug for function
+- Style for each warning
+- Icon path generated from env
 
 ### Changed
 
 - Location is set by method
+- eventName to phenomenonName
 
 ### Removed
 
-- Removed unused parser
+- Removed unused function
+
 
 ## [Released]
 
 ---
+
+

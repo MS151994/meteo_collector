@@ -1,6 +1,6 @@
 # IMGW Meteorologist Collector
 
-An application for collecting and filtering data from the IMGW API. 
+Application for collecting and filtering data from the [IMGW API](https://meteo.imgw.pl/). 
 It was created to enable home automation to collect data, 
 present it visually and generate appropriate notifications.
 ----
@@ -8,7 +8,7 @@ present it visually and generate appropriate notifications.
 
 #### Get warnings for your location
 
-```http
+```
   GET /weather/warnings?location=""
 ```
 

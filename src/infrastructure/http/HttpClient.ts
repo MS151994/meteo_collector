@@ -17,7 +17,9 @@ export class HttpClient {
     throwHttpErrors: true,
   };
 
-  protected readonly url = process.env.IMGW_API_URL;
+  protected readonly url =
+    process.env.IMGW_API_URL ||
+    "https://danepubliczne.imgw.pl/api/data/warningsmeteo";
 
   public async execute(): Promise<HttpResponseInterface> {
     try {

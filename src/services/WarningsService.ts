@@ -28,12 +28,14 @@ export class WarningsService {
   public async getLocalWarnings(
     territory: Territory,
   ): Promise<WarningsResponsePayload> {
-    const imgwWarnings = await this.getIMGWWarnings();
-    const localWarnings = this.getWarningForLocation(imgwWarnings, territory);
+    const imgwWarnings: IMGWWarningModel[] = await this.getIMGWWarnings();
+    const localWarnings: WarningPayload[] = this.getWarningForLocation(imgwWarnings, territory);
     this.setDurationWarningsTime(localWarnings);
-    this.setWarningsStyles(localWarnings);
+    if (process.env.ENABLE_ICON === "true") {
+      this.setWarningsStyles(localWarnings);
+    }
 
-    const warningsResponse = new WarningsResponsePayload(localWarnings);
+    const warningsResponse: WarningsResponsePayload = new WarningsResponsePayload(localWarnings);
     warningsResponse.setLocation(
       this.locationHelper.getLocationName(territory),
     );

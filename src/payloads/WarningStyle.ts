@@ -26,20 +26,20 @@ export class WarningStyle {
 
   private setIcon(level: number) {
     const iconLocation: string = process.env.ICON_LOCATION ?? "/";
-    const extension: string = process.env.ICON_EXTENSION ?? "";
+    const mime: string = process.env.ICON_MIME ?? "";
 
     switch (level) {
       case 1: {
-        return `${iconLocation}/code-yellow${extension}`;
+        return `${iconLocation}/code-yellow${mime}`;
       }
       case 2: {
-        return `${iconLocation}/code-orange${extension}`;
+        return `${iconLocation}/code-orange${mime}`;
       }
       case 3: {
-        return `${iconLocation}/code-red${extension}`;
+        return `${iconLocation}/code-red${mime}`;
       }
       default: {
-        return `${iconLocation}/code-green${extension}`;
+        return `${iconLocation}/code-green${mime}`;
       }
     }
   }

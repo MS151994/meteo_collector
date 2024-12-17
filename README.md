@@ -88,19 +88,19 @@ the location can be given as a number (1234) or the name of the city (Łódź) o
 ### Additional info to warning
 
 "style" object can be added to each warning, which will contain an icon and a icon url for use in HomeAssistant card
-If you want to get it, you need to set the icon path, file extension and enable its feature 
+If you want to get it, you need to set the icon path, file extension and enable its feature
 
-[see more]() 
+[see more]()
 
 ## Run Meteorologist Collector
 
-| ENV              | Type     | Description                                                                   |
-|:-----------------|:---------|:------------------------------------------------------------------------------|
-| `IMGW_API_URL`   | `string` | **Optional**. imgw api - https://danepubliczne.imgw.pl/api/data/warningsmeteo |
-| `LOG_LEVEL`      | `string` | **Optional**. default info                                                    |
-| `ICON_LOCATION`  | `string` | **Optional**. location homeassitant icon for 'iconPath' generator             |
-| `ICON_MIME`      | `string` | **Optional**. extension of icon file                                          |
-| `ENABLE_ICON`    | `bool`   | **Optional**. enable for set icon and style to each warning                   |
+| ENV             | Type     | Description                                                                   |
+| :-------------- | :------- | :---------------------------------------------------------------------------- |
+| `IMGW_API_URL`  | `string` | **Optional**. imgw api - https://danepubliczne.imgw.pl/api/data/warningsmeteo |
+| `LOG_LEVEL`     | `string` | **Optional**. default info                                                    |
+| `ICON_LOCATION` | `string` | **Optional**. location homeassitant icon for 'iconPath' generator             |
+| `ICON_MIME`     | `string` | **Optional**. extension of icon file                                          |
+| `ENABLE_ICON`   | `bool`   | **Optional**. enable for set icon and style to each warning                   |
 
 ### Docker
 
@@ -134,6 +134,7 @@ services:
 ```
 
 ## Roadmap
+
 - Language support
 - Syngeos API
 - IMGW hydro

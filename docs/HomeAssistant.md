@@ -43,7 +43,8 @@ After downloading the data from meteo-collector, you need to create a template f
 
 This card based on custom-button-card https://github.com/custom-cards/button-card
 icon: https://basmilius.github.io/weather-icons/index-fill.html or https://basmilius.github.io/weather-icons/index.html
-* you should place the icon pack in the default HomeAssistant directory
+
+- you should place the icon pack in the default HomeAssistant directory
 
 ### small warning card:
 

@@ -1,7 +1,7 @@
-import { Container } from "inversify";
+import {Container} from 'inversify';
 
-const container = new Container({ skipBaseClassChecks: true });
+const container = new Container({skipBaseClassChecks: true});
 
-require("./inversify.config").bind(container);
+require('./inversify.config').bind(container);
 
-export { container };
+export {container};

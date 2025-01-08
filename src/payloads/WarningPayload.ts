@@ -1,9 +1,9 @@
-import {AdditionalWarningInfoPayload} from "./AdditionalWarningInfoPayload";
-import {IMGWWarningModel} from "../models/WarningModel";
-import {WarningStyle} from "./WarningStyle";
+import {AdditionalWarningInfoPayload} from './AdditionalWarningInfoPayload';
+import {IMGWWarningModel} from '../models/WarningModel';
+import {WarningStyle} from './WarningStyle';
 
 export class WarningPayload {
-  private phenomenonName: string = "no warnings";
+  private phenomenonName: string = 'no warnings';
   private readonly additionalInfo: AdditionalWarningInfoPayload =
     new AdditionalWarningInfoPayload();
   private style: WarningStyle;
@@ -15,11 +15,11 @@ export class WarningPayload {
     }
   }
 
-  public setPhenomenonName(value: string) {
+  public setPhenomenonName(value: string): void {
     this.phenomenonName = value;
   }
 
-  public setStyle(level: number) {
+  public setStyle(level: number): void {
     this.style = new WarningStyle(level);
   }
 

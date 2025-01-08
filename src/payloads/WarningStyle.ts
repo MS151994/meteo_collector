@@ -10,23 +10,23 @@ export class WarningStyle {
   private setColor(level: number) {
     switch (level) {
       case 1: {
-        return "yellow";
+        return 'yellow';
       }
       case 2: {
-        return "orange";
+        return 'orange';
       }
       case 3: {
-        return "red";
+        return 'red';
       }
       default: {
-        return "green";
+        return 'green';
       }
     }
   }
 
   private setIcon(level: number) {
-    const iconLocation: string = process.env.ICON_LOCATION ?? "/";
-    const mime: string = process.env.ICON_MIME ?? "";
+    const iconLocation: string = process.env.ICON_LOCATION ?? '/';
+    const mime: string = process.env.ICON_MIME ?? '';
 
     switch (level) {
       case 1: {

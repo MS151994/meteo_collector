@@ -1,4 +1,3 @@
 node_modules
-docker-compose.yml
-build
-.env
+docker - compose.yml
+build.env

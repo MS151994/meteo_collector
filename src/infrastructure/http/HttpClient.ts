@@ -1,15 +1,15 @@
-import got, { Options } from "got";
-import { HttpResponseInterface } from "./HttpResponseInterface";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../ioc/Types";
-import { Logger } from "winston";
-import { HttpClientError } from "../errors/HttpClientError";
+import got, {Options} from 'got';
+import {HttpResponseInterface} from './HttpResponseInterface';
+import {inject, injectable} from 'inversify';
+import {TYPES} from '../ioc/Types';
+import {Logger} from 'winston';
+import {HttpClientError} from '../errors/HttpClientError';
 
 @injectable()
 export class HttpClient {
   @inject(TYPES.Logger)
   private readonly logger: Logger;
-  protected readonly prefix = "[HttpClient]";
+  protected readonly prefix: string = '[HttpClient]';
 
   protected defaultOptions: Options = {
     followRedirect: false,
@@ -17,9 +17,9 @@ export class HttpClient {
     throwHttpErrors: true,
   };
 
-  protected readonly url =
+  protected readonly url: string =
     process.env.IMGW_API_URL ||
-    "https://danepubliczne.imgw.pl/api/data/warningsmeteo";
+    'https://danepubliczne.imgw.pl/api/data/warningsmeteo';
 
   public async execute(): Promise<HttpResponseInterface> {
     try {
@@ -29,9 +29,9 @@ export class HttpClient {
       const res = (await got({
         ...this.defaultOptions,
         url: this.url,
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       })) as HttpResponseInterface;
 

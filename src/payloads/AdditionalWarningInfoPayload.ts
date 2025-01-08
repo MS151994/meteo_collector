@@ -1,14 +1,14 @@
-import {IMGWWarningModel} from "../models/WarningModel";
+import {IMGWWarningModel} from '../models/WarningModel';
 
 export class AdditionalWarningInfoPayload {
   private readonly level: number = 0;
   private readonly probability: number = 0;
   private readonly validTo: Date | null = null;
   private readonly validFrom: Date | null = null;
-  private estimatedEndTime: string = "Not available";
+  private estimatedEndTime: string = 'Not available';
   private readonly published: Date | null = null;
-  private readonly content: string = "";
-  private readonly comment: string = "";
+  private readonly content: string = '';
+  private readonly comment: string = '';
 
   public constructor(payload?: IMGWWarningModel) {
     if (payload?.level) {

@@ -1,13 +1,13 @@
-import { Container } from "inversify";
-import { WarningsService } from "../../services/WarningsService";
-import { TYPES } from "./Types";
-import { controllerModule } from "./ControllerModule";
-import winston, { Logger } from "winston";
-import { LoggerSettings } from "../logger/LoggerSettings";
-import { HttpClient } from "../http/HttpClient";
-import { WarningRepository } from "../repository/WarningRepository";
-import { LocationHelper } from "../../helper/LocationHelper";
-import { TimeHelper } from "../../helper/TimeHelper";
+import {Container} from 'inversify';
+import {WarningsService} from '../../services/WarningsService';
+import {TYPES} from './Types';
+import {controllerModule} from './ControllerModule';
+import winston, {Logger} from 'winston';
+import {LoggerSettings} from '../logger/LoggerSettings';
+import {HttpClient} from '../http/HttpClient';
+import {WarningRepository} from '../repository/WarningRepository';
+import {LocationHelper} from '../../helper/LocationHelper';
+import {TimeHelper} from '../../helper/TimeHelper';
 
 export const bind = (container: Container): void => {
   container.load(controllerModule);

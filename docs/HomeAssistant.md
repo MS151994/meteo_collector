@@ -1,5 +1,7 @@
 ## HomeAssistant configuration
 
+### REST
+
 in configuration.yaml file create rest platform
 
 ```yaml
@@ -7,7 +9,7 @@ in configuration.yaml file create rest platform
   scan_interval: 1800
   name: meteo-collector
   resource: http://<<IP ADDRESS>>:<<PORT>>/weather/warnings?location="YOUR_LOCATION"
-  value_template: " {{ value_json.location }}"
+  value_template: ' {{ value_json.location }}'
   json_attributes:
     - location
     - warnings
@@ -15,28 +17,6 @@ in configuration.yaml file create rest platform
     - lastUpdate
     - estimatedEndTime
     - errorMessage
-```
-
-After downloading the data from meteo-collector, you need to create a template for the sensors
-
-```yaml
-- platform: template
-  sensors:
-    imgw_warnings_count:
-      value_template: "{{ state_attr('sensor.meteo_collector', 'warnings') | default([],True) | count }}"
-    imgw_warnings_warning:
-      value_template: "{{ state_attr('sensor.meteo_collector', 'phenomenonName') }}"
-      attribute_templates:
-        location: "{{ state_attr('sensor.meteo_collector', 'location') }}"
-        lastUpdate: "{{ state_attr('sensor.meteo_collector', 'lastUpdate') }}"
-        estimatedEndTime: "{{ state_attr('sensor.meteo_collector', 'estimatedEndTime') }}"
-        errorMessage: "{{ state_attr('sensor.meteo_collector', 'errorMessage') }}"
-        warnings: >
-          {% set output = namespace(warning=[]) %}
-          {% for warn in state_attr('sensor.meteo_collector', 'warnings') %}
-              {% set output.warning = output.warning + [warn] %}
-          {% endfor %}
-          {{ output.warning }}
 ```
 
 ## HomeAssistant Card

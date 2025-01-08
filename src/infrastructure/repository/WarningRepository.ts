@@ -1,9 +1,9 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "../ioc/Types";
-import { HttpClient } from "../http/HttpClient";
-import { IMGWWarningModel } from "../../models/WarningModel";
-import { HttpResponseInterface } from "../http/HttpResponseInterface";
-import { Logger } from "winston";
+import {inject, injectable} from 'inversify';
+import {TYPES} from '../ioc/Types';
+import {HttpClient} from '../http/HttpClient';
+import {IMGWWarningModel} from '../../models/WarningModel';
+import {HttpResponseInterface} from '../http/HttpResponseInterface';
+import {Logger} from 'winston';
 
 @injectable()
 export class WarningRepository {

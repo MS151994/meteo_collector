@@ -125,7 +125,7 @@ services:
     container_name: meteo-collector-api
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       - IMGW_API_URL=https://danepubliczne.imgw.pl/api/data/warningsmeteo
       - LOG_LEVEL=info

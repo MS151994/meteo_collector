@@ -1,43 +1,43 @@
-import {WarningPayload} from "./WarningPayload";
-import {Type} from "class-transformer";
-import {IsDate, IsString} from "class-validator";
+import {WarningPayload} from './WarningPayload';
+import {Type} from 'class-transformer';
+import {IsDate, IsString} from 'class-validator';
 
 export class WarningsResponsePayload {
   @IsString()
-  public location: string = "";
+  public location: string = '';
 
   @IsString()
-  public phenomenonName: string = "";
+  public phenomenonName: string = '';
 
   @IsDate()
   public lastUpdate: Date = new Date();
 
   @IsString()
-  public estimatedEndTime: string = "";
+  public estimatedEndTime: string = '';
 
   @IsString()
-  public errorMessage: string = "";
+  public errorMessage: string = '';
 
-  @Type(() => WarningPayload)
+  @Type((): typeof WarningPayload => WarningPayload)
   public warnings: WarningPayload[];
 
   public constructor(warningPayload: WarningPayload[]) {
     this.warnings = warningPayload;
   }
 
-  public setLocation(location: string) {
+  public setLocation(location: string): void {
     this.location = location;
   }
 
-  public setEventsName(name: string) {
+  public setEventsName(name: string): void {
     this.phenomenonName = name;
   }
 
-  public setErrorMessage(msg: string) {
+  public setErrorMessage(msg: string): void {
     this.errorMessage = msg;
   }
 
-  public setEstimatedEndTime(estimatedEndTime: string) {
+  public setEstimatedEndTime(estimatedEndTime: string): void {
     this.estimatedEndTime = estimatedEndTime;
   }
 }

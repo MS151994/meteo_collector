@@ -3,7 +3,7 @@ name: Build and push Docker image
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install

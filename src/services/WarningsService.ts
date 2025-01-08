@@ -1,13 +1,13 @@
-import {inject, injectable} from "inversify";
-import {TYPES} from "../infrastructure/ioc/Types";
-import {WarningRepository} from "../infrastructure/repository/WarningRepository";
-import {IMGWWarningModel} from "../models/WarningModel";
-import {WarningPayload} from "../payloads/WarningPayload";
-import {Logger} from "winston";
-import {LocationHelper} from "../helper/LocationHelper";
-import {TimeHelper} from "../helper/TimeHelper";
-import {Territory} from "../infrastructure/types/territory";
-import {WarningsResponsePayload} from "../payloads/WarningsResponsePayload";
+import {inject, injectable} from 'inversify';
+import {TYPES} from '../infrastructure/ioc/Types';
+import {WarningRepository} from '../infrastructure/repository/WarningRepository';
+import {IMGWWarningModel} from '../models/WarningModel';
+import {WarningPayload} from '../payloads/WarningPayload';
+import {Logger} from 'winston';
+import {LocationHelper} from '../helper/LocationHelper';
+import {TimeHelper} from '../helper/TimeHelper';
+import {Territory} from '../infrastructure/types/territory';
+import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 
 @injectable()
 export class WarningsService {
@@ -23,7 +23,7 @@ export class WarningsService {
   @inject(TYPES.Logger)
   private readonly logger: Logger;
 
-  protected readonly prefix = "[WarningsService]";
+  protected readonly prefix: string = '[WarningsService]';
 
   public async getLocalWarnings(
     territory: Territory,
@@ -34,7 +34,7 @@ export class WarningsService {
       territory,
     );
     this.setDurationWarningsTime(localWarnings);
-    if (process.env.ENABLE_ICON === "true") {
+    if (process.env.ENABLE_ICON === 'true') {
       this.setWarningsStyles(localWarnings);
     }
 
@@ -66,21 +66,24 @@ export class WarningsService {
     territory: Territory,
   ): WarningPayload[] {
     return warnings
-      .filter((warning) =>
+      .filter((warning: IMGWWarningModel): boolean =>
         warning
           .getTerritory()
           .includes(Number(this.locationHelper.getId(territory))),
       )
-      .map((element) => new WarningPayload(element));
+      .map(
+        (element: IMGWWarningModel): WarningPayload =>
+          new WarningPayload(element),
+      );
   }
 
   private getDurationForMaxWarning(warnings: WarningPayload[]): string {
     if (!warnings.length) {
-      return "Not available";
+      return 'Not available';
     }
 
     return warnings
-      .reduce((maxWarning, currentWarning) => {
+      .reduce((maxWarning: WarningPayload, currentWarning: WarningPayload) => {
         return currentWarning.getLevel() > maxWarning.getLevel()
           ? currentWarning
           : maxWarning;
@@ -106,14 +109,14 @@ export class WarningsService {
 
   private setPhenomenonName(warnings: WarningPayload[]): string {
     this.logger.debug(`${this.prefix} Set phenomenon name for each warnings`);
-    let tmp = "";
+    let tmp = '';
     if (warnings.length) {
-      warnings.map((warning: WarningPayload) => {
-        tmp += warning.getPhenomenonName() + ", ";
+      warnings.map((warning: WarningPayload): void => {
+        tmp += warning.getPhenomenonName() + ', ';
       });
     }
 
-    return tmp.length ? tmp.substring(0, tmp.length - 2) : "Brak ostrzeżeń";
+    return tmp.length ? tmp.substring(0, tmp.length - 2) : 'Brak ostrzeżeń';
   }
 
   private async getIMGWWarnings(): Promise<IMGWWarningModel[]> {

@@ -85,22 +85,35 @@ the location can be given as a number (1234) or the name of the city (Łódź) o
 
 \*if the data you entered for the search does not exist, you will be informed about it in location field
 
-### Additional info to warning
+### Available plugins
+#### Warning Style Generator
+Possible to add a "style" object to each warning that will contain the icon and the icon URL for use in the HomeAssistant tab
+If you want to get this, you need to enable the add-on and set the icon path and file extension
 
-"style" object can be added to each warning, which will contain an icon and a icon url for use in HomeAssistant card
-If you want to get it, you need to set the icon path, file extension and enable its feature
+```json
+      "style": {
+        "color": "yellow", - colors are generated from warning level. yellow | orange | red | green 
+        "icon": "/local/icon/info/code-yellow.png" 
+      }
+```
 
-[see more]()
+
+sample config:
+```
+      ENABLE_WARNINGS_STYLES_PLUGIN=true
+      ICON_PATH=/local/icon/info
+      ICON_MIME_TYPE=.png
+```
+
 
 ## Run Meteorologist Collector
 
-| ENV             | Type     | Description                                                                   |
-| :-------------- | :------- | :---------------------------------------------------------------------------- |
-| `IMGW_API_URL`  | `string` | **Optional**. imgw api - https://danepubliczne.imgw.pl/api/data/warningsmeteo |
-| `LOG_LEVEL`     | `string` | **Optional**. default info                                                    |
-| `ICON_LOCATION` | `string` | **Optional**. location homeassitant icon for 'iconPath' generator             |
-| `ICON_MIME`     | `string` | **Optional**. extension of icon file                                          |
-| `ENABLE_ICON`   | `bool`   | **Optional**. enable for set icon and style to each warning                   |
+| ENV                             | Type     | Description                                                       |
+|:--------------------------------| :------- |:------------------------------------------------------------------|
+| `LOG_LEVEL`                     | `string` | **Optional**. default DEBUG                                       |
+| `ICON_PATH`                     | `string` | **Optional**. location homeassitant icon for 'iconPath' generator |
+| `ICON_MIME_TYPE`                | `string` | **Optional**. extension of icon file                              |
+| `ENABLE_WARNINGS_STYLES_PLUGIN` | `bool`   | **Optional**. enable for set icon and style to each warning       |
 
 ### Docker
 
@@ -110,9 +123,9 @@ If you want to get it, you need to set the icon path, file extension and enable 
    --restart=unless-stopped \
    -p 8080:8080 \
    -e LOG_LEVEL=debug \
-   -e ENABLE_ICON=true \
-   -e ICON_MIME=<file extension> \
-   -e ICON_LOCATION=<path/to/icon> \
+   -e ENABLE_WARNINGS_STYLES_PLUGIN=true \
+   -e ICON_MIME_TYPE=<file extension> \
+   -e ICON_PATH=<path/to/icon> \
    maciek600/meteocollector:v1.0.0
 ```
 
@@ -127,10 +140,10 @@ services:
     ports:
       - '8080:8080'
     environment:
-      - IMGW_API_URL=https://danepubliczne.imgw.pl/api/data/warningsmeteo
       - LOG_LEVEL=info
-      - ICON_LOCATION=
-      - ICON_EXTENSION=
+      - ICON_PATH=/local/
+      - ICON_MIME_TYPE=.jpeg
+      - ENABLE_WARNINGS_STYLES_PLUGIN=true
 ```
 
 ## Roadmap

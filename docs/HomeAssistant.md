@@ -9,7 +9,7 @@ in configuration.yaml file create rest platform
   scan_interval: 1800
   name: meteo-collector
   resource: http://<<IP ADDRESS>>:<<PORT>>/weather/warnings?location="YOUR_LOCATION"
-  value_template: ' {{ value_json.location }}'
+  value_template: ' {{ value_json.phenomenonName }}' <-- this is entity.state
   json_attributes:
     - location
     - warnings
@@ -20,6 +20,8 @@ in configuration.yaml file create rest platform
 ```
 
 ## HomeAssistant Card
+
+![](/docs/images/ha-imgw-card.png)
 
 This card based on custom-button-card https://github.com/custom-cards/button-card
 icon: https://basmilius.github.io/weather-icons/index-fill.html or https://basmilius.github.io/weather-icons/index.html
@@ -37,7 +39,7 @@ tap_action:
   action: none
 styles:
   grid:
-    - grid-template-areas: '"name icon" "name_state icon" "desc icon" "desc_state desc_state"'
+    - grid-template-areas: "\"name icon\" \"name_state icon\" \"desc icon\" \"desc_state desc_state\""
     - grid-template-columns: 1rf 1fr 1fr
     - grid-template-rows: min-content min-content min-content
   card:
@@ -85,6 +87,7 @@ custom_fields:
   icon: |
     [[[
       let icon = "/local/icon/info/code-green.png";
+
       if(entity.attributes.warnings.length)
         icon = entity.attributes.warnings[0].style.icon
 
@@ -103,7 +106,7 @@ tap_action:
   action: none
 styles:
   grid:
-    - grid-template-areas: '"desc desc desc " "com com com"'
+    - grid-template-areas: "\"desc desc desc \" \"com com com\""
   card:
     - padding: 14px
     - border: none

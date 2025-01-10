@@ -1,0 +1,60 @@
+{
+  "name": "meteocollector",
+  "version": "1.0.0",
+  "description": "Meteorological data collector from IMGW for HomeAssistant",
+  "main": "index.js",
+  "scripts": {
+    "start:auto": "npm install --no-save && nodemon -e ts --watch ./src --exec 'npm run build && node --title=meteo_collector_api ./build/index.js'",
+    "build": "npm run clean && tsc --build --pretty ./tsconfig.json",
+    "clean": "rm -Rf ./build ./coverage",
+    "clean:all": "npm run clean && rm -Rf node_modules",
+    "start": "tsc && node build/index.js",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier . --write",
+    "test:syntax": "npm run format && npm run lint",
+    "test:syntax:fix": "npm run format && npm run lint -- --fix"
+  },
+  "keywords": [
+    "meteorologic",
+    "IMGW",
+    "HomeAutomation",
+    "HomeAssistant"
+  ],
+  "author": "Maciej Stępień",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@stylistic/eslint-plugin-ts": "^2.12.1",
+    "@types/cors": "^2.8.17",
+    "@types/eslint__js": "^8.42.3",
+    "@types/express": "^5.0.0",
+    "@types/got": "^9.6.12",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^22.5.4",
+    "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.5.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "dotenv": "^16.4.5",
+    "envalid": "^8.0.0",
+    "express": "^4.21.1",
+    "got": "^11.8.6",
+    "inversify": "^6.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.0",
+    "reflect-metadata": "^0.2.1",
+    "routing-controllers": "^0.10.4",
+    "uuid": "^9.0.1",
+    "winston": "^3.13.0"
+  }
+}

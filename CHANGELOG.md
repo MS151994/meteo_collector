@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-## [Released]
+# [Released]
 
 ---
+
+## [v1.0.0] - 2025.01.10
+
+- Production release of the service

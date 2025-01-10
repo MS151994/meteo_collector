@@ -1,20 +1,18 @@
 import {Get, JsonController, QueryParam} from 'routing-controllers';
 import {inject, injectable} from 'inversify';
 import {TYPES} from '../infrastructure/ioc/Types';
-import {WarningsService} from '../services/WarningsService';
 import {Territory} from '../infrastructure/types/territory';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
+import {WeatherApplication} from '../application/WeatherApplication';
 
 @injectable()
 @JsonController('/weather')
 export class MeteorologicController {
-  @inject(TYPES.WeatherService)
-  private readonly warningsService: WarningsService;
+  @inject(TYPES.WeatherApplication)
+  private readonly weather: WeatherApplication;
 
   @Get('/warnings')
-  public async fetchWarnings(
-    @QueryParam('location') location: Territory,
-  ): Promise<WarningsResponsePayload> {
-    return this.warningsService.getLocalWarnings(location);
+  public async fetchWarnings(@QueryParam('location') location: Territory): Promise<WarningsResponsePayload> {
+    return this.weather.getWarnings(location);
   }
 }

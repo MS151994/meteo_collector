@@ -22,16 +22,11 @@ export class LocationHelper {
         territory = `Not found location for given territory: ${location}`;
       }
     } else {
-      const entry: [string, TerritoryEnum] | undefined = Object.entries(
-        TerritoryEnum,
-      ).find(
-        ([key, value]: [string, TerritoryEnum]): boolean =>
-          value === String(location),
+      const entry: [string, TerritoryEnum] | undefined = Object.entries(TerritoryEnum).find(
+        ([key, value]: [string, TerritoryEnum]): boolean => value === String(location),
       );
 
-      territory = entry
-        ? entry[0]
-        : `Not found location for given id: ${location}`;
+      territory = entry ? entry[0] : `Not found location for given id: ${location}`;
     }
 
     return String(territory);

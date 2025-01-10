@@ -1,6 +1,5 @@
 import {inject, injectable} from 'inversify';
 import {TYPES} from '../infrastructure/ioc/Types';
-import {WarningRepository} from '../infrastructure/repository/WarningRepository';
 import {IMGWWarningModel} from '../models/WarningModel';
 import {WarningPayload} from '../payloads/WarningPayload';
 import {Logger} from 'winston';
@@ -8,12 +7,12 @@ import {LocationHelper} from '../helper/LocationHelper';
 import {TimeHelper} from '../helper/TimeHelper';
 import {Territory} from '../infrastructure/types/territory';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
+import {HttpResponseInterface} from '../infrastructure/http/HttpResponseInterface';
+import {GetWarningDataFromIMGWHttpQuery} from '../infrastructure/http/query/GetWarningDataFromIMGWHttpQuery';
+import {HttpClient} from '../infrastructure/http/HttpClient';
 
 @injectable()
 export class WarningsService {
-  @inject(TYPES.WarningRepository)
-  private readonly warningRepository: WarningRepository;
-
   @inject(TYPES.LocationHelper)
   private readonly locationHelper: LocationHelper;
 
@@ -23,58 +22,37 @@ export class WarningsService {
   @inject(TYPES.Logger)
   private readonly logger: Logger;
 
-  protected readonly prefix: string = '[WarningsService]';
+  @inject(TYPES.HttpClient)
+  private readonly httpClient: HttpClient;
 
-  public async getLocalWarnings(
-    territory: Territory,
-  ): Promise<WarningsResponsePayload> {
-    const imgwWarnings: IMGWWarningModel[] = await this.getIMGWWarnings();
-    const localWarnings: WarningPayload[] = this.getWarningForLocation(
-      imgwWarnings,
-      territory,
-    );
-    this.setDurationWarningsTime(localWarnings);
-    if (process.env.ENABLE_ICON === 'true') {
-      this.setWarningsStyles(localWarnings);
+  protected readonly prefix: string = 'WarningsService';
+
+  public async getLocalWarnings(territory: Territory): Promise<WarningsResponsePayload> {
+    const localWarnings: WarningPayload[] = await this.getWarningsForGivenLocation(territory);
+
+    if (localWarnings.length) {
+      this.setDurationTimeForEachWarnings(localWarnings);
     }
 
-    const warningsResponse: WarningsResponsePayload =
-      new WarningsResponsePayload(localWarnings);
-    warningsResponse.setLocation(
-      this.locationHelper.getLocationName(territory),
-    );
-    warningsResponse.setEventsName(this.setPhenomenonName(localWarnings));
-    warningsResponse.setEstimatedEndTime(
-      this.getDurationForMaxWarning(localWarnings),
-    );
+    const warningsResponse: WarningsResponsePayload = new WarningsResponsePayload();
 
-    if (!localWarnings.length) {
-      this.logger.warn(
-        `${this.prefix} Not found warnings for given location (${territory})`,
-      );
-
-      warningsResponse.setErrorMessage(
-        `${this.prefix} Not found warnings for given location (${territory})`,
-      );
-    }
+    warningsResponse
+      .setWarnings(localWarnings)
+      .setLocation(this.locationHelper.getLocationName(territory))
+      .setEventsName(this.setPhenomenonNameForEachWarnings(localWarnings))
+      .setEstimatedEndTime(this.getDurationForMaxWarning(localWarnings));
 
     return warningsResponse;
   }
 
-  private getWarningForLocation(
-    warnings: IMGWWarningModel[],
-    territory: Territory,
-  ): WarningPayload[] {
+  private async getWarningsForGivenLocation(territory: Territory): Promise<WarningPayload[]> {
+    const warnings: IMGWWarningModel[] = await this.getWarningsFromAPI();
+
     return warnings
       .filter((warning: IMGWWarningModel): boolean =>
-        warning
-          .getTerritory()
-          .includes(Number(this.locationHelper.getId(territory))),
+        warning.getTerritory().includes(Number(this.locationHelper.getId(territory))),
       )
-      .map(
-        (element: IMGWWarningModel): WarningPayload =>
-          new WarningPayload(element),
-      );
+      .map((element: IMGWWarningModel): WarningPayload => new WarningPayload(element));
   }
 
   private getDurationForMaxWarning(warnings: WarningPayload[]): string {
@@ -84,44 +62,52 @@ export class WarningsService {
 
     return warnings
       .reduce((maxWarning: WarningPayload, currentWarning: WarningPayload) => {
-        return currentWarning.getLevel() > maxWarning.getLevel()
-          ? currentWarning
-          : maxWarning;
+        return currentWarning.getLevel() > maxWarning.getLevel() ? currentWarning : maxWarning;
       })
       .getDuration();
   }
 
-  private setDurationWarningsTime(warnings: WarningPayload[]): void {
-    this.logger.debug(`${this.prefix} Set duration times for each warnings`);
+  private setDurationTimeForEachWarnings(warnings: WarningPayload[]): void {
+    this.logger.debug(`[${this.prefix}] Set duration times for each warnings`);
     for (const warning of warnings) {
-      warning.setEstimatedEndTime(
-        this.timeHelper.getDurationTime(warning.getValidTo()),
-      );
+      warning.setEstimatedEndTime(this.timeHelper.getDurationTime(warning.getValidTo()));
     }
   }
 
-  private setWarningsStyles(warnings: WarningPayload[]): void {
-    this.logger.debug(`${this.prefix} Set styles for each warnings`);
-    for (const warning of warnings) {
-      warning.setStyle(warning.getLevel());
+  private setPhenomenonNameForEachWarnings(warnings: WarningPayload[]): string {
+    if (!warnings.length) {
+      return 'No warnings';
     }
-  }
+    this.logger.debug(`[${this.prefix}] Set phenomenon name for each warnings`);
 
-  private setPhenomenonName(warnings: WarningPayload[]): string {
-    this.logger.debug(`${this.prefix} Set phenomenon name for each warnings`);
-    let tmp = '';
+    let tmp: string = '';
     if (warnings.length) {
       warnings.map((warning: WarningPayload): void => {
         tmp += warning.getPhenomenonName() + ', ';
       });
     }
 
-    return tmp.length ? tmp.substring(0, tmp.length - 2) : 'Brak ostrzeżeń';
+    return tmp.substring(0, tmp.length - 2);
   }
 
-  private async getIMGWWarnings(): Promise<IMGWWarningModel[]> {
-    this.logger.info(`${this.prefix} Fetch data form IMGW`);
+  private async getWarningsFromAPI(): Promise<IMGWWarningModel[]> {
+    const warnings: IMGWWarningModel[] = [];
+    try {
+      const response: HttpResponseInterface = await this.httpClient.execute(new GetWarningDataFromIMGWHttpQuery());
 
-    return this.warningRepository.get();
+      if (response.body.length) {
+        response.body.map((warning: any) => {
+          warnings.push(new IMGWWarningModel(warning));
+        });
+      }
+
+      return warnings;
+    } catch (err) {
+      this.logger.warn(
+        `[${this.prefix}] Not found warnings in IMGW meteorologic. error: ${(err as Error).message}, return empty array`,
+      );
+
+      return warnings;
+    }
   }
 }

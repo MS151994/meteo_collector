@@ -4,8 +4,7 @@ import {WarningStyle} from './WarningStyle';
 
 export class WarningPayload {
   private phenomenonName: string = 'no warnings';
-  private readonly additionalInfo: AdditionalWarningInfoPayload =
-    new AdditionalWarningInfoPayload();
+  private readonly additionalInfo: AdditionalWarningInfoPayload = new AdditionalWarningInfoPayload();
   private style: WarningStyle;
 
   public constructor(warning?: IMGWWarningModel) {

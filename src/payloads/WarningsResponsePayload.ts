@@ -21,23 +21,37 @@ export class WarningsResponsePayload {
   @Type((): typeof WarningPayload => WarningPayload)
   public warnings: WarningPayload[];
 
-  public constructor(warningPayload: WarningPayload[]) {
+  public getWarnings(): WarningPayload[] {
+    return this.warnings;
+  }
+
+  public setWarnings(warningPayload: WarningPayload[]): this {
     this.warnings = warningPayload;
+
+    return this;
   }
 
-  public setLocation(location: string): void {
+  public setLocation(location: string): this {
     this.location = location;
+
+    return this;
   }
 
-  public setEventsName(name: string): void {
+  public setEventsName(name: string): this {
     this.phenomenonName = name;
+
+    return this;
   }
 
-  public setErrorMessage(msg: string): void {
+  public setErrorMessage(msg: string): this {
     this.errorMessage = msg;
+
+    return this;
   }
 
-  public setEstimatedEndTime(estimatedEndTime: string): void {
+  public setEstimatedEndTime(estimatedEndTime: string): this {
     this.estimatedEndTime = estimatedEndTime;
+
+    return this;
   }
 }

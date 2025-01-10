@@ -4,6 +4,13 @@ Application for collecting and filtering data from the [IMGW API](https://meteo.
 It was created to enable home automation to collect data,
 present it visually and generate appropriate notifications.
 
+example of use in HomeAssistant
+
+<div display="flex" align="center" width="100%">
+    <img src="/docs/images/ha-imgw-card-dark.png" width="250"/>
+    <img src="/docs/images/ha-imgw-card-light.png" width="250"/>
+</div>
+
 ---
 
 ## API Reference
@@ -86,34 +93,35 @@ the location can be given as a number (1234) or the name of the city (Łódź) o
 \*if the data you entered for the search does not exist, you will be informed about it in location field
 
 ### Available plugins
+
 #### Warning Style Generator
+
 Possible to add a "style" object to each warning that will contain the icon and the icon URL for use in the HomeAssistant tab
 If you want to get this, you need to enable the add-on and set the icon path and file extension
 
 ```json
       "style": {
-        "color": "yellow", - colors are generated from warning level. yellow | orange | red | green 
-        "icon": "/local/icon/info/code-yellow.png" 
+        "color": "yellow", - colors are generated from warning level. yellow | orange | red | green
+        "icon": "/local/icon/info/code-yellow.png"
       }
 ```
 
-
 sample config:
+
 ```
       ENABLE_WARNINGS_STYLES_PLUGIN=true
       ICON_PATH=/local/icon/info
       ICON_MIME_TYPE=.png
 ```
 
-
 ## Run Meteorologist Collector
 
-| ENV                             | Type     | Description                                                       |
-|:--------------------------------| :------- |:------------------------------------------------------------------|
-| `LOG_LEVEL`                     | `string` | **Optional**. default DEBUG                                       |
-| `ICON_PATH`                     | `string` | **Optional**. location homeassitant icon for 'iconPath' generator |
-| `ICON_MIME_TYPE`                | `string` | **Optional**. extension of icon file                              |
-| `ENABLE_WARNINGS_STYLES_PLUGIN` | `bool`   | **Optional**. enable for set icon and style to each warning       |
+| ENV                             | Type     | Description                                                         |
+| :------------------------------ | :------- | :------------------------------------------------------------------ |
+| `LOG_LEVEL`                     | `string` | **Optional**. default DEBUG                                         |
+| `ICON_PATH`                     | `string` | **Optional**. location HomeAssistant icon for 'iconPath' generator  |
+| `ICON_MIME_TYPE`                | `string` | **Optional**. extension of icon file                                |
+| `ENABLE_WARNINGS_STYLES_PLUGIN` | `bool`   | **Optional**. enable plugin for adding style object to each warning |
 
 ### Docker
 
@@ -153,6 +161,7 @@ services:
 - IMGW hydro
 - IMGW weather station
 - Send data to HomeAssistant via MQTT
+- Send notification to mobile phone
 
 ## Tech Stack
 

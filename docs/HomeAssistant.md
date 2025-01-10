@@ -21,12 +21,17 @@ in configuration.yaml file create rest platform
 
 ## HomeAssistant Card
 
-![](/docs/images/ha-imgw-card.png)
+<div display="flex" align="center" width="100%">
+    <img src="/docs/images/ha-imgw-card-dark.png" width="250"/>
+    <img src="/docs/images/ha-imgw-card-light.png" width="250"/>
+</div>
 
-This card based on custom-button-card https://github.com/custom-cards/button-card
-icon: https://basmilius.github.io/weather-icons/index-fill.html or https://basmilius.github.io/weather-icons/index.html
+This card based on [custom-button-card](https://github.com/custom-cards/button-card)
+
+used icon: https://basmilius.github.io/weather-icons/index-fill.html or https://basmilius.github.io/weather-icons/index.html
 
 - you should place the icon pack in the default HomeAssistant directory
+  /config/www/icon/
 
 ### small warning card:
 
@@ -39,7 +44,7 @@ tap_action:
   action: none
 styles:
   grid:
-    - grid-template-areas: "\"name icon\" \"name_state icon\" \"desc icon\" \"desc_state desc_state\""
+    - grid-template-areas: '"name icon" "name_state icon" "desc icon" "desc_state desc_state"'
     - grid-template-columns: 1rf 1fr 1fr
     - grid-template-rows: min-content min-content min-content
   card:
@@ -106,7 +111,7 @@ tap_action:
   action: none
 styles:
   grid:
-    - grid-template-areas: "\"desc desc desc \" \"com com com\""
+    - grid-template-areas: '"desc desc desc " "com com com"'
   card:
     - padding: 14px
     - border: none

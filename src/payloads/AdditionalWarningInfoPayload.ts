@@ -63,15 +63,15 @@ export class AdditionalWarningInfoPayload {
     return this.published;
   }
 
-  public getValidFromDate() {
+  public getValidFromDate(): Date | null {
     return this.validFrom;
   }
 
-  public getValidToDate() {
+  public getValidToDate(): Date | null {
     return this.validTo;
   }
 
-  public setEstimatedEndTime(estimatedEndTime: string) {
+  public setEstimatedEndTime(estimatedEndTime: string): void {
     this.estimatedEndTime = estimatedEndTime;
   }
 }

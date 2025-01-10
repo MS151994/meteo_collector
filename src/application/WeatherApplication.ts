@@ -5,6 +5,7 @@ import {TYPES} from '../infrastructure/ioc/Types';
 import {WarningsService} from '../services/WarningsService';
 import {Logger} from 'winston';
 import {StylesPlugin} from '../plugin/StylesPlugin';
+import Env from '../infrastructure/env/Env';
 
 @injectable()
 export class WeatherApplication {
@@ -29,7 +30,7 @@ export class WeatherApplication {
       warnings.setErrorMessage(`Not found warnings for given location (${territory})`);
     }
 
-    if (process.env.ENABLE_ICON === 'true') {
+    if (Env.ENABLE_WARNINGS_STYLES_PLUGIN) {
       this.plugin.setStyles(warnings.getWarnings());
     }
 

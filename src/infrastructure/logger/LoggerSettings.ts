@@ -1,4 +1,5 @@
 import winston, {LoggerOptions} from 'winston';
+import Env from '../env/Env';
 
 const loggerLevels = {
   error: 1,
@@ -14,6 +15,6 @@ export const LoggerSettings: LoggerOptions = {
   silent: false,
   transports: [new winston.transports.Console()],
   exitOnError: false,
-  level: process.env.LOG_LEVEL ?? 'debug',
+  level: Env.LOG_LEVEL,
   levels: loggerLevels,
 };

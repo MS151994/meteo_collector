@@ -1,3 +1,6 @@
+import Env from '../infrastructure/env/Env';
+import {WarnLevelStyle} from '../infrastructure/types/warnLevelStyle';
+
 export class WarningStyle {
   private color: string;
   private icon: string;
@@ -7,7 +10,7 @@ export class WarningStyle {
     this.icon = this.setIcon(level);
   }
 
-  private setColor(level: number) {
+  private setColor(level: number): WarnLevelStyle {
     switch (level) {
       case 1: {
         return 'yellow';
@@ -24,22 +27,22 @@ export class WarningStyle {
     }
   }
 
-  private setIcon(level: number) {
-    const iconLocation: string = process.env.ICON_LOCATION ?? '/';
-    const mime: string = process.env.ICON_MIME ?? '';
+  private setIcon(level: number): string {
+    const path: string = Env.ICON_PATH;
+    const mime: string = Env.ICON_MIME_TYPE;
 
     switch (level) {
       case 1: {
-        return `${iconLocation}/code-yellow${mime}`;
+        return `${path}/code-yellow${mime}`;
       }
       case 2: {
-        return `${iconLocation}/code-orange${mime}`;
+        return `${path}/code-orange${mime}`;
       }
       case 3: {
-        return `${iconLocation}/code-red${mime}`;
+        return `${path}/code-red${mime}`;
       }
       default: {
-        return `${iconLocation}/code-green${mime}`;
+        return `${path}/code-green${mime}`;
       }
     }
   }

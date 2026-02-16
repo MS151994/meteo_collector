@@ -110,6 +110,8 @@ sample config:
 
 ```
       ENABLE_WARNINGS_STYLES_PLUGIN=true
+      ENABLE_WARNINGS_CRON=true
+      WARNINGS_CRON_SCHEDULE=*/30 * * * *
       ICON_PATH=/local/icon/info
       ICON_MIME_TYPE=.png
 ```
@@ -122,6 +124,23 @@ sample config:
 | `ICON_PATH`                     | `string` | **Optional**. location HomeAssistant icon for 'iconPath' generator  |
 | `ICON_MIME_TYPE`                | `string` | **Optional**. extension of icon file                                |
 | `ENABLE_WARNINGS_STYLES_PLUGIN` | `bool`   | **Optional**. enable plugin for adding style object to each warning |
+| `ENABLE_WARNINGS_CRON`          | `bool`   | **Optional**. enable warnings cron and notifications                |
+| `WARNINGS_CRON_SCHEDULE`        | `string` | **Optional**. cron schedule for warnings polling                    |
+
+### Notifications
+
+You can forward warnings to an external notification router:
+
+```
+https://github.com/MS151994/notification-router
+```
+
+Or you can send a custom message payload automatically by defining a cron schedule:
+
+```
+ENABLE_WARNINGS_CRON=true
+WARNINGS_CRON_SCHEDULE=*/30 * * * *
+```
 
 ### Docker
 
@@ -131,6 +150,8 @@ sample config:
    --restart=unless-stopped \
    -p 8080:8080 \
    -e LOG_LEVEL=debug \
+   -e ENABLE_WARNINGS_CRON=true \
+   -e WARNINGS_CRON_SCHEDULE="*/30 * * * *" \
    -e ENABLE_WARNINGS_STYLES_PLUGIN=true \
    -e ICON_MIME_TYPE=<file extension> \
    -e ICON_PATH=<path/to/icon> \
@@ -149,6 +170,8 @@ services:
       - '8080:8080'
     environment:
       - LOG_LEVEL=info
+      - ENABLE_WARNINGS_CRON=true
+      - WARNINGS_CRON_SCHEDULE=*/30 * * * *
       - ICON_PATH=/local/
       - ICON_MIME_TYPE=.jpeg
       - ENABLE_WARNINGS_STYLES_PLUGIN=true

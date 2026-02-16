@@ -28,7 +28,11 @@ export class HttpClient {
         ...query.getQuery(),
       })) as HttpResponseInterface;
 
-      response.body = JSON.parse(res.body);
+      try {
+        response.body = JSON.parse(res.body);
+      } catch {
+        response.body = res.body;
+      }
       response.statusCode = res.statusCode;
       response.headers = res.headers;
 

@@ -4,4 +4,5 @@ export interface QueryInterface {
   url: string;
   method: Method;
   headers: Headers;
+  form?: Record<string, string>;
 }

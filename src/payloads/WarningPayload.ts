@@ -42,6 +42,22 @@ export class WarningPayload {
     return this.additionalInfo.getLevel();
   }
 
+  public getProbability(): number {
+    return this.additionalInfo.getProbability();
+  }
+
+  public getContent(): string {
+    return this.additionalInfo.getContent();
+  }
+
+  public getComment(): string {
+    return this.additionalInfo.getComment();
+  }
+
+  public getPublishDate(): Date | null {
+    return this.additionalInfo.getPublishDate();
+  }
+
   public getPhenomenonName(): string {
     return this.phenomenonName;
   }

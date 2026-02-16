@@ -1,5 +1,6 @@
 import {Container} from 'inversify';
 import {WarningsService} from '../../services/WarningsService';
+import {WarningsCronService} from '../../services/WarningsCronService';
 import {TYPES} from './Types';
 import {controllerModule} from './ControllerModule';
 import winston, {Logger} from 'winston';
@@ -17,6 +18,7 @@ export const bind = (container: Container): void => {
 
   //Services
   container.bind<WarningsService>(TYPES.WeatherService).to(WarningsService).inSingletonScope();
+  container.bind<WarningsCronService>(TYPES.WarningsCronService).to(WarningsCronService).inSingletonScope();
 
   //Helpers
   container.bind<LocationHelper>(TYPES.LocationHelper).to(LocationHelper).inSingletonScope();

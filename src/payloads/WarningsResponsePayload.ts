@@ -25,6 +25,10 @@ export class WarningsResponsePayload {
     return this.warnings;
   }
 
+  public getErrorMessage(): string {
+    return this.errorMessage;
+  }
+
   public setWarnings(warningPayload: WarningPayload[]): this {
     this.warnings = warningPayload;
 

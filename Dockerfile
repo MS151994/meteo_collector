@@ -1,4 +1,4 @@
-FROM node:22.7.0-slim AS builder
+FROM node:24.13.0-slim AS builder
 
 WORKDIR /opt/meteo_collector/
 COPY . .
@@ -7,7 +7,7 @@ RUN npm ci --ignore-scripts
 
 RUN npm run build
 
-FROM node:22.7.0-slim AS production
+FROM node:24.13.0-slim AS production
 
 LABEL maintener="mstepien"
 

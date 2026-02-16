@@ -11,6 +11,7 @@ example of use in HomeAssistant
     <img src="/docs/images/ha-imgw-card-light.png" width="250"/>
 </div>
 
+
 ---
 
 ## API Reference

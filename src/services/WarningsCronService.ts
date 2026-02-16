@@ -58,7 +58,9 @@ export class WarningsCronService {
         this.lastWarningsSignature = await this.loadLastSignature();
       }
       const warnings = await this.weatherApplication.getWarnings(Env.WARNINGS_TERRITORY);
-      this.logger.info(`${this.prefix} cron initial run response: ${JSON.stringify(warnings)}`);
+      this.logger.info(
+        `${this.prefix} cron initial run with response: ${warnings.getWarnings().length ? warnings.getWarnings().length + 'warnings' : warnings.getErrorMessage()}`,
+      );
       await this.processWarnings(warnings, true);
     } catch (error) {
       this.logger.error(

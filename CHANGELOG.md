@@ -15,9 +15,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-# [Released]
-
 ---
+
+## [1.1.0] - 2026.02.16
+
+### Added
+
+- Added `getErrorMessage` method to `WarningsResponsePayload`.
+- Add WarningsCronService and integrate cron-based warnings handling
+- Introduced `WarningsCronService` to manage cron-based warnings notifications.
+- Integrated environmental configurations for warnings cron setup.
+- Added utility functions and HTTP query for posting warning events.
+- Enhanced error handling in `HttpClient`.
+- Configured jest for unit testing and added GitHub Actions workflow for CI.
+
+### Changed
+
+- Updated GitHub Actions workflow to support all tag formats.
+- Enhanced initial run logging in `WarningsCronService`.
+- Upgraded `multer` and other dependencies; removed outdated packages.
+- Migrated Dockerfile to Node.js 24.13.0.
+- Updated dependencies in `package.json`.
 
 ## [v1.0.0] - 2025.01.10
 

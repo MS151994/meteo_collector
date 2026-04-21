@@ -11,7 +11,6 @@ example of use in HomeAssistant
     <img src="/docs/images/ha-imgw-card-light.png" width="250"/>
 </div>
 
-
 ---
 
 ## API Reference
@@ -127,6 +126,20 @@ sample config:
 | `ENABLE_WARNINGS_STYLES_PLUGIN` | `bool`   | **Optional**. enable plugin for adding style object to each warning |
 | `ENABLE_WARNINGS_CRON`          | `bool`   | **Optional**. enable warnings cron and notifications                |
 | `WARNINGS_CRON_SCHEDULE`        | `string` | **Optional**. cron schedule for warnings polling                    |
+| `ENABLE_HA_MQTT`                | `bool`   | **Optional**. enable MQTT Discovery publishing to Home Assistant    |
+| `MQTT_URL`                      | `string` | **Optional**. broker url e.g. mqtt://emqx:1883                      |
+| `MQTT_USERNAME`                 | `string` | **Optional**. broker username                                       |
+| `MQTT_PASSWORD`                 | `string` | **Optional**. broker password                                       |
+| `MQTT_CLIENT_ID`                | `string` | **Optional**. client id                                             |
+| `MQTT_BASE_TOPIC`               | `string` | **Optional**. base topic (default meteocollector)                   |
+| `MQTT_QOS`                      | `number` | **Optional**. qos 0/1/2                                             |
+| `HA_MQTT_DISCOVERY_PREFIX`      | `string` | **Optional**. discovery prefix (default homeassistant)              |
+| `HA_MQTT_DEVICE_ID`             | `string` | **Optional**. device identifier                                     |
+| `HA_MQTT_DEVICE_NAME`           | `string` | **Optional**. device name                                           |
+| `HA_MQTT_DEVICE_MODEL`          | `string` | **Optional**. device model                                          |
+| `HA_MQTT_DEVICE_MANUFACTURER`   | `string` | **Optional**. device manufacturer                                   |
+| `HA_MQTT_SENSOR_NAME`           | `string` | **Optional**. sensor name                                           |
+| `HA_MQTT_UNIQUE_ID`             | `string` | **Optional**. override sensor unique_id                             |
 
 ### Notifications
 
@@ -176,6 +189,10 @@ services:
       - ICON_PATH=/local/
       - ICON_MIME_TYPE=.jpeg
       - ENABLE_WARNINGS_STYLES_PLUGIN=true
+      - ENABLE_HA_MQTT=true
+      - MQTT_URL=mqtt://emqx:1883
+      - MQTT_USERNAME=your_user
+      - MQTT_PASSWORD=your_password
 ```
 
 ## Roadmap
@@ -184,8 +201,8 @@ services:
 - Syngeos API
 - IMGW hydro
 - IMGW weather station
-- Send data to HomeAssistant via MQTT
-- Send notification to mobile phone
+- Send more data to HomeAssistant via MQTT - done
+- Send notification to mobile phone - done
 
 ## Tech Stack
 

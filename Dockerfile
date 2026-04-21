@@ -18,6 +18,8 @@ COPY --chown=node:node --from=builder /opt/meteo_collector/package.json ./
 
 EXPOSE 8080
 ENV NODE_ENV=production
+ENV NODE_OPTIONS="--no-warnings"
+
 USER node
 
-CMD node --no-warnings --title=meteo_collector_api ./build/index.js
+CMD ["node", "--title=meteo-collector-api", "./build/index.js"]

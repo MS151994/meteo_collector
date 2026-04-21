@@ -1,5 +1,44 @@
 ## HomeAssistant configuration
 
+### MQTT (Discovery)
+
+This integration lets MeteoCollector publish a Home Assistant entity via MQTT Discovery (recommended when you already have EMQX/MQTT).
+
+1. Enable MQTT integration in Home Assistant
+2. Configure MeteoCollector env (MQTT broker with username/password)
+
+Minimal env example:
+
+```bash
+ENABLE_WARNINGS_CRON=true
+ENABLE_HA_MQTT=true
+
+MQTT_URL=mqtt://<EMQX_HOST>:1883
+MQTT_USERNAME=<USER>
+MQTT_PASSWORD=<PASSWORD>
+
+# optional
+MQTT_BASE_TOPIC=meteocollector
+HA_MQTT_DEVICE_ID=meteocollector
+HA_MQTT_SENSOR_NAME=meteo_collector
+MQTT_CLIENT_ID=meteocollector_api_1
+
+# if you see "entity became unavailable" flicker in HA history:
+HA_MQTT_ENABLE_AVAILABILITY=false
+```
+
+What gets created in HA:
+
+- MQTT Sensor with state = `phenomenonName`
+- Sensor attributes = full JSON payload compatible with `WarningsResponsePayload` (published on `<MQTT_BASE_TOPIC>/<HA_MQTT_DEVICE_ID>/warnings`)
+
+Troubleshooting reconnect/close loop:
+
+- In Docker, `MQTT_URL=mqtt://localhost:1883` points to the container itself; use the broker host/service name (e.g. `mqtt://emqx:1883`)
+- Verify port/protocol: plain MQTT is usually `1883`, TLS is usually `8883` (use `mqtts://...`)
+- Ensure `MQTT_CLIENT_ID` is unique if you run multiple instances (or leave it empty to auto-generate)
+- Wrong username/password typically results in broker closing the connection (check EMQX auth/ACL logs)
+
 ### REST
 
 in configuration.yaml file create rest platform

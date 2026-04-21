@@ -17,6 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2026.04.22
+
+### ADDED
+
+- Introduced MQTT integration for Home Assistant.
+- Added `HomeAssistantMqttService` and `MqttClient` bindings.
+
+### CHANGED
+
+- Upgraded dependencies, including `mqtt`, `multer`, and others.
+- Adjusted type registrations in the IoC container.
+
 ## [1.1.0] - 2026.02.16
 
 ### Added

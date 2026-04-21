@@ -10,6 +10,7 @@ import {promises as fs} from 'fs';
 import path from 'path';
 import {HttpClient} from '../infrastructure/http/HttpClient';
 import {PostWarningEventHttpQuery} from '../infrastructure/http/query/PostWarningEventHttpQuery';
+import {HomeAssistantMqttService} from './HomeAssistantMqttService';
 
 type EventSeverity = 'warning';
 
@@ -24,6 +25,9 @@ export class WarningsCronService {
   @inject(TYPES.HttpClient)
   private readonly httpClient: HttpClient;
 
+  @inject(TYPES.HomeAssistantMqttService)
+  private readonly haMqttService: HomeAssistantMqttService;
+
   private readonly prefix: string = '[Meteorologic Collector]';
   private readonly signatureFilePath: string = path.resolve('data/last_warnings_signature.json');
   private lastWarningsSignature: string | null = null;
@@ -37,6 +41,12 @@ export class WarningsCronService {
       `${this.prefix} cron scheduled: ${Env.WARNINGS_CRON_SCHEDULE} with territory ${Env.WARNINGS_TERRITORY}`,
     );
 
+    if (Env.ENABLE_HA_MQTT) {
+      void this.haMqttService.start().catch((error: unknown) => {
+        this.logger.error(`${this.prefix} mqtt start error: ${error instanceof Error ? error.message : String(error)}`);
+      });
+    }
+
     void this.runInitial();
   }
 
@@ -45,6 +55,7 @@ export class WarningsCronService {
       const warnings = await this.weatherApplication.getWarnings(Env.WARNINGS_TERRITORY);
       this.logger.info(`${this.prefix} cron warnings response: ${JSON.stringify(warnings)}`);
       await this.processWarnings(warnings, false);
+      await this.publishToHomeAssistantMqtt(warnings);
     } catch (error) {
       this.logger.error(
         `${this.prefix} cron warnings error: ${error instanceof Error ? error.message : String(error)}`,
@@ -62,10 +73,23 @@ export class WarningsCronService {
         `${this.prefix} cron initial run with response: ${warnings.getWarnings().length ? warnings.getWarnings().length + 'warnings' : warnings.getErrorMessage()}`,
       );
       await this.processWarnings(warnings, true);
+      await this.publishToHomeAssistantMqtt(warnings);
     } catch (error) {
       this.logger.error(
         `${this.prefix} cron initial run error: ${error instanceof Error ? error.message : String(error)}`,
       );
+    }
+  }
+
+  private async publishToHomeAssistantMqtt(warnings: WarningsResponsePayload): Promise<void> {
+    if (!Env.ENABLE_HA_MQTT) {
+      return;
+    }
+
+    try {
+      await this.haMqttService.publishWarnings(warnings);
+    } catch (error) {
+      this.logger.error(`${this.prefix} mqtt publish error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -82,7 +106,13 @@ export class WarningsCronService {
     if (signature === this.lastWarningsSignature) {
       return;
     }
-    const sent = await this.sendWarningEvent(warnings);
+    let sent = false;
+    try {
+      sent = await this.sendWarningEvent(warnings);
+    } catch (error) {
+      this.logger.error(`${this.prefix} event send error: ${error instanceof Error ? error.message : String(error)}`);
+      sent = false;
+    }
     if (sent) {
       this.lastWarningsSignature = signature;
       await this.persistSignature(signature);

@@ -15,3 +15,7 @@ services:
       - LOG_LEVEL=info
       - ICON_LOCATION=
       - ICON_EXTENSION=
+      - ENABLE_HA_MQTT=false
+      - MQTT_URL=
+      - MQTT_USERNAME=
+      - MQTT_PASSWORD=

@@ -11,6 +11,8 @@ FROM node:24.13.0-slim AS production
 
 LABEL maintener="mstepien"
 
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /opt/meteo_collector/
 COPY --chown=node:node --from=builder /opt/meteo_collector/node_modules/ ./node_modules/
 COPY --chown=node:node --from=builder /opt/meteo_collector/build/ ./build/

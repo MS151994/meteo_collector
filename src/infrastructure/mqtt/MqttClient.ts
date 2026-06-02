@@ -21,6 +21,10 @@ export class MqttClient {
 
   private readonly prefix: string = '[MqttClient]';
 
+  public isConnected(): boolean {
+    return this.client?.connected ?? false;
+  }
+
   public async start(availabilityTopic: string | null): Promise<void> {
     await this.ensureConnected(availabilityTopic);
   }

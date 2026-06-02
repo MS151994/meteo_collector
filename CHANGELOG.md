@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] - 2026.06.02
+
+### ADDED
+
+- Add HealthController with `/health` and `/alive` endpoints, update dependencies
+
 ## [1.2.0] - 2026.04.22
 
 ### ADDED

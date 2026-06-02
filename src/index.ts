@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import {createExpressServer, useContainer} from 'routing-controllers';
 import {container} from './infrastructure/ioc/Container';
 import {MeteorologicController} from './controllers/MeteorologicController';
+import {HealthController} from './controllers/HealthController';
 import {Logger} from 'winston';
 import {TYPES} from './infrastructure/ioc/Types';
 import * as pack from '../package.json';
@@ -15,7 +16,7 @@ const logger: Logger = container.get<Logger>(TYPES.Logger);
 const warningsCronService: WarningsCronService = container.get<WarningsCronService>(TYPES.WarningsCronService);
 
 const app = createExpressServer({
-  controllers: [MeteorologicController],
+  controllers: [MeteorologicController, HealthController],
   defaults: {
     undefinedResultCode: 404,
   },

@@ -1,7 +1,7 @@
 import mqtt, {IClientOptions, MqttClient as RawMqttClient} from 'mqtt';
 import {inject, injectable} from 'inversify';
-import {Logger} from 'winston';
 import Env from '../env/Env';
+import {LoggerService} from '../logger/LoggerService';
 import {TYPES} from '../ioc/Types';
 import {mqttDeviceId} from './topics';
 
@@ -12,8 +12,8 @@ export type PublishOptions = {
 
 @injectable()
 export class MqttClient {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   private client: RawMqttClient | null = null;
   private connecting: Promise<RawMqttClient> | null = null;
@@ -86,7 +86,7 @@ export class MqttClient {
     }
 
     if (availabilityTopic && this.availabilityTopic && this.availabilityTopic !== availabilityTopic) {
-      this.logger.warn(
+      this.logger.warning(
         `${this.prefix} availability topic changed from ${this.availabilityTopic} to ${availabilityTopic}`,
       );
     }
@@ -155,7 +155,7 @@ export class MqttClient {
         settle(() => resolve(client));
 
         client.once('close', () => {
-          this.logger.warn(`${this.prefix} connection lost, will reconnect on next publish`);
+          this.logger.warning(`${this.prefix} connection lost, will reconnect on next publish`);
           for (const sub of this.subscriptions) {
             client.off('message', sub.messageListener);
           }
@@ -165,18 +165,18 @@ export class MqttClient {
       };
 
       const onClose = () => {
-        this.logger.warn(`${this.prefix} connection closed (clientId=${clientId})`);
+        this.logger.warning(`${this.prefix} connection closed (clientId=${clientId})`);
         if (!client.connected) {
           settle(() => reject(new Error('MQTT connection closed before connect (check URL/port/TLS/auth/clientId)')));
         }
       };
 
       const onOffline = () => {
-        this.logger.warn(`${this.prefix} offline (clientId=${clientId})`);
+        this.logger.warning(`${this.prefix} offline (clientId=${clientId})`);
       };
 
       const onEnd = () => {
-        this.logger.warn(`${this.prefix} ended (clientId=${clientId})`);
+        this.logger.warning(`${this.prefix} ended (clientId=${clientId})`);
         if (!client.connected) {
           settle(() => reject(new Error('MQTT connection ended before connect')));
         }

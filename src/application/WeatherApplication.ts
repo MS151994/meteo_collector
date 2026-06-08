@@ -3,9 +3,9 @@ import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import {Territory} from '../infrastructure/types/territory';
 import {TYPES} from '../infrastructure/ioc/Types';
 import {WarningsService} from '../services/WarningsService';
-import {Logger} from 'winston';
 import {StylesPlugin} from '../plugin/StylesPlugin';
 import Env from '../infrastructure/env/Env';
+import {LoggerService} from '../infrastructure/logger/LoggerService';
 
 @injectable()
 export class WeatherApplication {
@@ -15,8 +15,8 @@ export class WeatherApplication {
   @inject(TYPES.StylesPlugin)
   private readonly plugin: StylesPlugin;
 
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   protected readonly prefix: string = 'WeatherApplication';
 
@@ -25,7 +25,7 @@ export class WeatherApplication {
     const warnings: WarningsResponsePayload = await this.warningsService.getLocalWarnings(territory);
 
     if (!warnings.getWarnings().length) {
-      this.logger.warn(`[${this.prefix}] Not found warnings for given location (${territory})`);
+      this.logger.warning(`[${this.prefix}] Not found warnings for given location (${territory})`);
 
       warnings.setErrorMessage(`Not found warnings for given location (${territory})`);
     }

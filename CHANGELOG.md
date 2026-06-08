@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Enhance the MQTT client with subscription handling, HA birth topic support, and connection stability improvements
+- Replace Winston logger with custom `LoggerService`, integrate `AsyncLocalStorageService` for request-level tracing, and modify related bindings and imports. Add nanoid dependency.
 
 ### Removed
 

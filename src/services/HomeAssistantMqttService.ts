@@ -1,6 +1,6 @@
 import {inject, injectable} from 'inversify';
-import {Logger} from 'winston';
 import Env from '../infrastructure/env/Env';
+import {LoggerService} from '../infrastructure/logger/LoggerService';
 import {TYPES} from '../infrastructure/ioc/Types';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import * as pack from '../../package.json';
@@ -15,8 +15,8 @@ import {
 
 @injectable()
 export class HomeAssistantMqttService {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   @inject(TYPES.MqttClient)
   private readonly mqttClient: MqttClient;
@@ -52,7 +52,7 @@ export class HomeAssistantMqttService {
       });
       this.logger.info(`${this.prefix} subscribed to HA birth topic: ${birthTopic}`);
     } catch (err) {
-      this.logger.warn(
+      this.logger.warning(
         `${this.prefix} failed to subscribe to birth topic: ${err instanceof Error ? err.message : String(err)}`,
       );
     }
@@ -63,7 +63,7 @@ export class HomeAssistantMqttService {
       return;
     }
     if (!Env.MQTT_URL) {
-      this.logger.warn(`${this.prefix} publish skipped: missing MQTT_URL`);
+      this.logger.warning(`${this.prefix} publish skipped: missing MQTT_URL`);
       return;
     }
 

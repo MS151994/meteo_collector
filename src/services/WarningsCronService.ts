@@ -1,6 +1,6 @@
 import {inject, injectable} from 'inversify';
-import {Logger} from 'winston';
 import {TYPES} from '../infrastructure/ioc/Types';
+import {LoggerService} from '../infrastructure/logger/LoggerService';
 import {WeatherApplication} from '../application/WeatherApplication';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import {WarningPayload} from '../payloads/WarningPayload';
@@ -16,8 +16,8 @@ type EventSeverity = 'warning';
 
 @injectable()
 export class WarningsCronService {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   @inject(TYPES.WeatherApplication)
   private readonly weatherApplication: WeatherApplication;
@@ -157,7 +157,7 @@ export class WarningsCronService {
       if (error?.code === 'ENOENT') {
         return null;
       }
-      this.logger.warn(
+      this.logger.warning(
         `${this.prefix} failed to read signature file: ${error instanceof Error ? error.message : String(error)}`,
       );
       return null;
@@ -169,7 +169,7 @@ export class WarningsCronService {
       await fs.mkdir(path.dirname(this.signatureFilePath), {recursive: true});
       await fs.writeFile(this.signatureFilePath, JSON.stringify({signature}), 'utf8');
     } catch (error) {
-      this.logger.warn(
+      this.logger.warning(
         `${this.prefix} failed to persist signature: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
@@ -229,7 +229,7 @@ export class WarningsCronService {
 
   private async sendWarningEvent(warningsResponse: WarningsResponsePayload): Promise<boolean> {
     if (!Env.USER || !Env.PASSWORD) {
-      this.logger.warn(`${this.prefix} event send skipped: missing USER or PASSWORD env`);
+      this.logger.warning(`${this.prefix} event send skipped: missing USER or PASSWORD env`);
       return false;
     }
 

@@ -13,7 +13,7 @@
     "format": "prettier . --write",
     "test:syntax": "npm run format && npm run lint",
     "test:syntax:fix": "npm run format && npm run lint -- --fix",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "keywords": [
     "meteorologic",
@@ -57,6 +57,7 @@
     "inversify": "^6.0.2",
     "mqtt": "^5.15.1",
     "multer": "^2.1.1",
+    "nanoid": "^3.3.12",
     "node-cron": "^4.2.1",
     "nodemon": "^3.1.0",
     "reflect-metadata": "^0.2.1",

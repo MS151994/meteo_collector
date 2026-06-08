@@ -2,8 +2,8 @@ import {inject, injectable} from 'inversify';
 import {TYPES} from '../infrastructure/ioc/Types';
 import {IMGWWarningModel} from '../models/WarningModel';
 import {WarningPayload} from '../payloads/WarningPayload';
-import {Logger} from 'winston';
 import {LocationHelper} from '../helper/LocationHelper';
+import {LoggerService} from '../infrastructure/logger/LoggerService';
 import {TimeHelper} from '../helper/TimeHelper';
 import {Territory} from '../infrastructure/types/territory';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
@@ -19,8 +19,8 @@ export class WarningsService {
   @inject(TYPES.TimeHelper)
   private readonly timeHelper: TimeHelper;
 
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   @inject(TYPES.HttpClient)
   private readonly httpClient: HttpClient;
@@ -103,7 +103,7 @@ export class WarningsService {
 
       return warnings;
     } catch (err) {
-      this.logger.warn(
+      this.logger.warning(
         `[${this.prefix}] Not found warnings in IMGW meteorologic. error: ${(err as Error).message}, return empty array`,
       );
 

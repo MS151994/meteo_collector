@@ -1,7 +1,7 @@
 import mqtt, {IClientOptions, MqttClient as RawMqttClient} from 'mqtt';
 import {inject, injectable} from 'inversify';
-import {Logger} from 'winston';
 import Env from '../env/Env';
+import {LoggerService} from '../logger/LoggerService';
 import {TYPES} from '../ioc/Types';
 import {mqttDeviceId} from './topics';
 
@@ -12,12 +12,13 @@ export type PublishOptions = {
 
 @injectable()
 export class MqttClient {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   private client: RawMqttClient | null = null;
   private connecting: Promise<RawMqttClient> | null = null;
   private availabilityTopic: string | null = null;
+  private subscriptions: Array<{topic: string; messageListener: (t: string, msg: Buffer) => void}> = [];
 
   private readonly prefix: string = '[MqttClient]';
 
@@ -27,6 +28,32 @@ export class MqttClient {
 
   public async start(availabilityTopic: string | null): Promise<void> {
     await this.ensureConnected(availabilityTopic);
+  }
+
+  public async subscribe(
+    availabilityTopic: string | null,
+    topic: string,
+    handler: (payload: string) => void,
+  ): Promise<void> {
+    const client = await this.ensureConnected(availabilityTopic);
+
+    const messageListener = (receivedTopic: string, message: Buffer): void => {
+      if (receivedTopic === topic) {
+        handler(message.toString());
+      }
+    };
+
+    return new Promise<void>((resolve, reject) => {
+      client.subscribe(topic, {qos: 0}, (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        client.on('message', messageListener);
+        this.subscriptions.push({topic, messageListener});
+        resolve();
+      });
+    });
   }
 
   public async publish(
@@ -59,7 +86,7 @@ export class MqttClient {
     }
 
     if (availabilityTopic && this.availabilityTopic && this.availabilityTopic !== availabilityTopic) {
-      this.logger.warn(
+      this.logger.warning(
         `${this.prefix} availability topic changed from ${this.availabilityTopic} to ${availabilityTopic}`,
       );
     }
@@ -67,6 +94,12 @@ export class MqttClient {
 
     if (this.client?.connected) {
       return this.client;
+    }
+
+    if (this.client) {
+      this.client.removeAllListeners();
+      this.client.end(true);
+      this.client = null;
     }
 
     if (this.connecting) {
@@ -81,7 +114,7 @@ export class MqttClient {
         username: Env.MQTT_USERNAME || undefined,
         password: Env.MQTT_PASSWORD || undefined,
         keepalive: 60,
-        reconnectPeriod: 2_000,
+        reconnectPeriod: 0,
         connectTimeout: 10_000,
         clean: true,
       };
@@ -100,7 +133,6 @@ export class MqttClient {
 
       const settle = (fn: () => void) => {
         client.off('connect', onConnect);
-        client.off('reconnect', onReconnect);
         client.off('close', onClose);
         client.off('offline', onOffline);
         client.off('end', onEnd);
@@ -114,26 +146,37 @@ export class MqttClient {
         if (availabilityTopic) {
           void this.publishOnline(client, availabilityTopic);
         }
-        settle(() => resolve(client));
-      };
 
-      const onReconnect = () => {
-        this.logger.warn(`${this.prefix} reconnecting... (clientId=${clientId})`);
+        for (const sub of this.subscriptions) {
+          client.subscribe(sub.topic, {qos: 0});
+          client.on('message', sub.messageListener);
+        }
+
+        settle(() => resolve(client));
+
+        client.once('close', () => {
+          this.logger.warning(`${this.prefix} connection lost, will reconnect on next publish`);
+          for (const sub of this.subscriptions) {
+            client.off('message', sub.messageListener);
+          }
+          this.client = null;
+          this.connecting = null;
+        });
       };
 
       const onClose = () => {
-        this.logger.warn(`${this.prefix} connection closed (clientId=${clientId})`);
+        this.logger.warning(`${this.prefix} connection closed (clientId=${clientId})`);
         if (!client.connected) {
           settle(() => reject(new Error('MQTT connection closed before connect (check URL/port/TLS/auth/clientId)')));
         }
       };
 
       const onOffline = () => {
-        this.logger.warn(`${this.prefix} offline (clientId=${clientId})`);
+        this.logger.warning(`${this.prefix} offline (clientId=${clientId})`);
       };
 
       const onEnd = () => {
-        this.logger.warn(`${this.prefix} ended (clientId=${clientId})`);
+        this.logger.warning(`${this.prefix} ended (clientId=${clientId})`);
         if (!client.connected) {
           settle(() => reject(new Error('MQTT connection ended before connect')));
         }
@@ -160,7 +203,6 @@ export class MqttClient {
       }, 12_000);
 
       client.on('connect', onConnect);
-      client.on('reconnect', onReconnect);
       client.on('close', onClose);
       client.on('offline', onOffline);
       client.on('end', onEnd);

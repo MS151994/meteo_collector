@@ -1,6 +1,6 @@
 import {inject, injectable} from 'inversify';
-import {Logger} from 'winston';
 import Env from '../infrastructure/env/Env';
+import {LoggerService} from '../infrastructure/logger/LoggerService';
 import {TYPES} from '../infrastructure/ioc/Types';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import * as pack from '../../package.json';
@@ -15,13 +15,14 @@ import {
 
 @injectable()
 export class HomeAssistantMqttService {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   @inject(TYPES.MqttClient)
   private readonly mqttClient: MqttClient;
 
   private discoveryPublished: boolean = false;
+  private lastWarnings: WarningsResponsePayload | null = null;
 
   private readonly prefix: string = '[HomeAssistant MQTT]';
 
@@ -31,6 +32,30 @@ export class HomeAssistantMqttService {
     }
 
     await this.mqttClient.start(this.availabilityTopic());
+    await this.subscribeToHaBirth();
+  }
+
+  private async subscribeToHaBirth(): Promise<void> {
+    const birthTopic = `${Env.HA_MQTT_DISCOVERY_PREFIX}/status`;
+    try {
+      await this.mqttClient.subscribe(this.availabilityTopic(), birthTopic, (payload) => {
+        if (payload !== 'online') {
+          return;
+        }
+        this.logger.info(`${this.prefix} HA birth detected, re-announcing discovery and state`);
+        this.discoveryPublished = false;
+        if (this.lastWarnings) {
+          void this.publishWarnings(this.lastWarnings).catch((err: unknown) => {
+            this.logger.error(`${this.prefix} re-announce error: ${err instanceof Error ? err.message : String(err)}`);
+          });
+        }
+      });
+      this.logger.info(`${this.prefix} subscribed to HA birth topic: ${birthTopic}`);
+    } catch (err) {
+      this.logger.warning(
+        `${this.prefix} failed to subscribe to birth topic: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
   }
 
   public async publishWarnings(warnings: WarningsResponsePayload): Promise<void> {
@@ -38,10 +63,11 @@ export class HomeAssistantMqttService {
       return;
     }
     if (!Env.MQTT_URL) {
-      this.logger.warn(`${this.prefix} publish skipped: missing MQTT_URL`);
+      this.logger.warning(`${this.prefix} publish skipped: missing MQTT_URL`);
       return;
     }
 
+    this.lastWarnings = warnings;
     await this.publishDiscovery();
 
     const payload = JSON.stringify(JSON.parse(JSON.stringify(warnings)));

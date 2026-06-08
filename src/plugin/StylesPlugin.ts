@@ -1,12 +1,12 @@
 import {WarningPayload} from '../payloads/WarningPayload';
 import {inject, injectable} from 'inversify';
 import {TYPES} from '../infrastructure/ioc/Types';
-import {Logger} from 'winston';
+import {LoggerService} from '../infrastructure/logger/LoggerService';
 
 @injectable()
 export class StylesPlugin {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
 
   protected readonly prefix: string = 'PluginModule';
 

@@ -10,12 +10,15 @@ services:
     volumes:
       - .:/opt/meteo_collector
     environment:
-      - NODE_ENV=development
-      - IMGW_API_URL=https://danepubliczne.imgw.pl/api/data/warningsmeteo
-      - LOG_LEVEL=info
-      - ICON_LOCATION=
-      - ICON_EXTENSION=
-      - ENABLE_HA_MQTT=false
-      - MQTT_URL=
-      - MQTT_USERNAME=
-      - MQTT_PASSWORD=
+      NODE_ENV: development
+      LOG_LEVEL: debug
+      ENABLE_WARNINGS_STYLES_PLUGIN: true
+      ICON_PATH: /local/icon/info
+      ICON_MIME_TYPE: .png
+      EVENT_GATEWAY:
+      USER:
+      PASSWORD:
+      ENABLE_HA_MQTT: false
+      MQTT_URL:
+      MQTT_USERNAME:
+      MQTT_PASSWORD:

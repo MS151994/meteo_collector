@@ -2,14 +2,14 @@ import got, {Options} from 'got';
 import {HttpResponseInterface} from './HttpResponseInterface';
 import {inject, injectable} from 'inversify';
 import {TYPES} from '../ioc/Types';
-import {Logger} from 'winston';
 import {HttpClientError} from '../errors/HttpClientError';
 import {QueryableInterface} from './interface/QueryableInterface';
+import {LoggerService} from '../logger/LoggerService';
 
 @injectable()
 export class HttpClient {
-  @inject(TYPES.Logger)
-  private readonly logger: Logger;
+  @inject(TYPES.LoggerService)
+  private readonly logger: LoggerService;
   protected readonly prefix: string = '[HttpClient]';
 
   protected defaultOptions: Options = {

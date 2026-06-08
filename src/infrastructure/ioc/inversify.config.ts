@@ -3,8 +3,6 @@ import {WarningsService} from '../../services/WarningsService';
 import {WarningsCronService} from '../../services/WarningsCronService';
 import {TYPES} from './Types';
 import {controllerModule} from './ControllerModule';
-import winston, {Logger} from 'winston';
-import {LoggerSettings} from '../logger/LoggerSettings';
 import {HttpClient} from '../http/HttpClient';
 import {LocationHelper} from '../../helper/LocationHelper';
 import {TimeHelper} from '../../helper/TimeHelper';
@@ -12,6 +10,8 @@ import {WeatherApplication} from '../../application/WeatherApplication';
 import {StylesPlugin} from '../../plugin/StylesPlugin';
 import {HomeAssistantMqttService} from '../../services/HomeAssistantMqttService';
 import {MqttClient} from '../mqtt/MqttClient';
+import {LoggerService} from '../logger/LoggerService';
+import {AsyncLocalStorageService} from '../middleware/AsyncLocalStorageService';
 
 export const bind = (container: Container): void => {
   container.load(controllerModule);
@@ -33,7 +33,9 @@ export const bind = (container: Container): void => {
   container.bind<HttpClient>(TYPES.HttpClient).to(HttpClient).inSingletonScope();
   container.bind<MqttClient>(TYPES.MqttClient).to(MqttClient).inSingletonScope();
   //Logger
-  container.bind<Logger>(TYPES.Logger).toConstantValue(winston.createLogger(LoggerSettings));
+  container.bind<AsyncLocalStorageService>(AsyncLocalStorageService).toSelf().inSingletonScope();
+  container.bind<AsyncLocalStorageService>(TYPES.AsyncLocalStorageService).toService(AsyncLocalStorageService);
+  container.bind<LoggerService>(TYPES.LoggerService).to(LoggerService).inSingletonScope();
 
   //Plugins
   container.bind<StylesPlugin>(TYPES.StylesPlugin).to(StylesPlugin).inSingletonScope();

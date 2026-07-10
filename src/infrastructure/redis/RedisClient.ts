@@ -12,6 +12,18 @@ export class RedisClient {
   private client: Redis | null = null;
   private readonly prefix: string = '[RedisClient]';
 
+  public async isConnected(): Promise<boolean> {
+    const client = this.getClient();
+    if (!client) {
+      return false;
+    }
+    try {
+      return (await client.ping()) === 'PONG';
+    } catch {
+      return false;
+    }
+  }
+
   public async get(key: string): Promise<string | null> {
     const client = this.getClient();
     if (!client) {

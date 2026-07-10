@@ -30,6 +30,9 @@ app.listen(Env.API_PORT, (): void => {
   logger.info(`${prefix} log level is set to: ${Env.LOG_LEVEL.toUpperCase()}`);
   logger.info(`${prefix} listen on port: ${Env.API_PORT}`);
   logger.info(`${prefix} warnings styles plugins: ${Env.ENABLE_WARNINGS_STYLES_PLUGIN}`);
+  logger.info(`${prefix} territory: ${Env.WARNINGS_TERRITORY}`);
+  logger.info(`${prefix} redis: ${Env.REDIS_URL ? 'configured' : 'disabled (in-memory)'}`);
+  logger.info(`${prefix} history recording: ${Env.ENABLE_HISTORY}`);
 });
 
 if (Env.ENABLE_WARNINGS_CRON) {

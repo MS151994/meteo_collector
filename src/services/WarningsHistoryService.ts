@@ -1,9 +1,9 @@
 import {inject, injectable} from 'inversify';
-import {createHash} from 'crypto';
 import Env from '../infrastructure/env/Env';
 import {TYPES} from '../infrastructure/ioc/Types';
 import {RedisClient} from '../infrastructure/redis/RedisClient';
 import {LoggerService} from '../infrastructure/logger/LoggerService';
+import {WarningSignatureHelper} from '../helper/WarningSignatureHelper';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import {WarningPayload} from '../payloads/WarningPayload';
 
@@ -30,6 +30,9 @@ export class WarningsHistoryService {
   @inject(TYPES.LoggerService)
   private readonly logger: LoggerService;
 
+  @inject(TYPES.WarningSignatureHelper)
+  private readonly signatureHelper: WarningSignatureHelper;
+
   private readonly prefix: string = '[WarningsHistory]';
   private readonly keyPrefix: string = `meteo:history:${Env.WARNINGS_TERRITORY}`;
 
@@ -43,7 +46,7 @@ export class WarningsHistoryService {
 
     for (const warning of warnings.getWarnings()) {
       const entry = this.buildEntry(warning, warnings.location, recordedAt);
-      const key = `${this.keyPrefix}:${this.signature(entry)}`;
+      const key = `${this.keyPrefix}:${this.signatureHelper.forHistory(warning)}`;
       try {
         // NX: first sighting wins; later updates (comment/validTo) of the same warning are ignored.
         await this.redis.setNx(key, JSON.stringify(entry), ttl);
@@ -67,11 +70,6 @@ export class WarningsHistoryService {
       );
       return [];
     }
-  }
-
-  // Identity of a warning for dedup: content + level + probability. Excludes comment/dates so edits don't duplicate.
-  private signature(entry: WarningHistoryEntry): string {
-    return createHash('sha1').update(`${entry.content}|${entry.level}|${entry.probability}`).digest('hex');
   }
 
   private buildEntry(warning: WarningPayload, location: string, recordedAt: string): WarningHistoryEntry {

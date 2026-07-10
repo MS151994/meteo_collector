@@ -35,9 +35,11 @@ const buildRedisStub = () => ({
 
 const buildService = async (redis: ReturnType<typeof buildRedisStub>) => {
   const {WarningsHistoryService} = await import('../../src/services/WarningsHistoryService');
+  const {WarningSignatureHelper} = await import('../../src/helper/WarningSignatureHelper');
   const service = new WarningsHistoryService();
   (service as any).logger = {info: jest.fn(), warning: jest.fn(), error: jest.fn()};
   (service as any).redis = redis;
+  (service as any).signatureHelper = new WarningSignatureHelper();
   return service;
 };
 

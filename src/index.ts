@@ -7,7 +7,7 @@ import {HistoryController} from './controllers/HistoryController';
 import {TYPES} from './infrastructure/ioc/Types';
 import * as pack from '../package.json';
 import Env from './infrastructure/env/Env';
-import {WarningsCronService} from './services/WarningsCronService';
+import {WarningsCronWorker} from './worker/WarningsCronWorker';
 import {LoggerService} from './infrastructure/logger/LoggerService';
 import {AsyncLocalStorageService} from './infrastructure/middleware/AsyncLocalStorageService';
 
@@ -15,7 +15,7 @@ const prefix = '[Meteorologic Collector]';
 useContainer(container);
 
 const logger: LoggerService = container.get<LoggerService>(TYPES.LoggerService);
-const warningsCronService: WarningsCronService = container.get<WarningsCronService>(TYPES.WarningsCronService);
+const warningsCronWorker: WarningsCronWorker = container.get<WarningsCronWorker>(TYPES.WarningsCronWorker);
 
 const app = createExpressServer({
   controllers: [MeteorologicController, HealthController, HistoryController],
@@ -33,7 +33,7 @@ app.listen(Env.API_PORT, (): void => {
 });
 
 if (Env.ENABLE_WARNINGS_CRON) {
-  warningsCronService.start();
+  warningsCronWorker.start();
 } else {
   logger.info(`${prefix} cron disabled via ENABLE_WARNINGS_CRON`);
 }

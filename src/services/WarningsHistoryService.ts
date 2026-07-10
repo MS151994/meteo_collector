@@ -48,7 +48,6 @@ export class WarningsHistoryService {
       const entry = this.buildEntry(warning, warnings.location, recordedAt);
       const key = `${this.keyPrefix}:${this.signatureHelper.forHistory(warning)}`;
       try {
-        // NX: first sighting wins; later updates (comment/validTo) of the same warning are ignored.
         await this.redis.setNx(key, JSON.stringify(entry), ttl);
       } catch (error) {
         this.logger.warning(

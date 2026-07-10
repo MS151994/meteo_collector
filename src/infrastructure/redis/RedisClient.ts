@@ -28,7 +28,6 @@ export class RedisClient {
     await client.set(key, value);
   }
 
-  // Sets key only if absent (NX) with a TTL — first write wins, key self-expires. Returns true when stored.
   public async setNx(key: string, value: string, ttlSeconds: number): Promise<boolean> {
     const client = this.getClient();
     if (!client) {
@@ -39,7 +38,6 @@ export class RedisClient {
     return result === 'OK';
   }
 
-  // Returns the values of every key matching pattern (SCAN + MGET, non-blocking).
   public async scanValues(pattern: string): Promise<string[]> {
     const client = this.getClient();
     if (!client) {
@@ -68,7 +66,11 @@ export class RedisClient {
     }
 
     if (!this.client) {
-      this.client = new Redis(Env.REDIS_URL, {maxRetriesPerRequest: 2});
+      this.client = new Redis(Env.REDIS_URL, {
+        maxRetriesPerRequest: 2,
+        ...(Env.REDIS_USERNAME ? {username: Env.REDIS_USERNAME} : {}),
+        ...(Env.REDIS_PASSWORD ? {password: Env.REDIS_PASSWORD} : {}),
+      });
       this.client.on('error', (err: Error) => this.logger.warning(`${this.prefix} ${err.message}`));
     }
 

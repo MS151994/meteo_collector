@@ -1,6 +1,6 @@
 {
   "name": "meteocollector",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Meteorological data collector from IMGW for HomeAssistant",
   "main": "index.js",
   "scripts": {

@@ -126,6 +126,9 @@ sample config:
 | `ENABLE_WARNINGS_STYLES_PLUGIN` | `bool`   | **Optional**. enable plugin for adding style object to each warning |
 | `ENABLE_WARNINGS_CRON`          | `bool`   | **Optional**. enable warnings cron and notifications                |
 | `WARNINGS_CRON_SCHEDULE`        | `string` | **Optional**. cron schedule for warnings polling                    |
+| `REDIS_URL`                     | `string` | **Optional**. redis url e.g. redis://redis:6379 (empty = in-memory) |
+| `REDIS_USERNAME`                | `string` | **Optional**. redis username (overrides URL when set)               |
+| `REDIS_PASSWORD`                | `string` | **Optional**. redis password (overrides URL when set)               |
 | `ENABLE_HA_MQTT`                | `bool`   | **Optional**. enable MQTT Discovery publishing to Home Assistant    |
 | `MQTT_URL`                      | `string` | **Optional**. broker url e.g. mqtt://emqx:1883                      |
 | `MQTT_USERNAME`                 | `string` | **Optional**. broker username                                       |

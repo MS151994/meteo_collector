@@ -39,7 +39,7 @@ describe('HomeAssistantMqttService', () => {
     jest.resetModules();
     process.env.ENABLE_HA_MQTT = 'false';
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -54,7 +54,7 @@ describe('HomeAssistantMqttService', () => {
   it('start connects and subscribes to HA birth topic', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -69,7 +69,7 @@ describe('HomeAssistantMqttService', () => {
   it('start logs warning when subscribe to birth topic fails', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const logger = makeLogger();
     const mqtt = makeMqttClient();
@@ -86,7 +86,7 @@ describe('HomeAssistantMqttService', () => {
     jest.resetModules();
     process.env.ENABLE_HA_MQTT = 'false';
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -101,7 +101,7 @@ describe('HomeAssistantMqttService', () => {
     jest.resetModules();
     process.env.MQTT_URL = '';
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const logger = makeLogger();
     const mqtt = makeMqttClient();
@@ -117,7 +117,7 @@ describe('HomeAssistantMqttService', () => {
   it('publishWarnings publishes discovery and state on first call', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -134,7 +134,7 @@ describe('HomeAssistantMqttService', () => {
   it('publishWarnings skips discovery on second call', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -152,7 +152,7 @@ describe('HomeAssistantMqttService', () => {
     jest.resetModules();
     process.env.HA_MQTT_ENABLE_AVAILABILITY = 'true';
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -170,7 +170,7 @@ describe('HomeAssistantMqttService', () => {
     jest.resetModules();
     process.env.HA_MQTT_ENABLE_AVAILABILITY = 'false';
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -185,7 +185,7 @@ describe('HomeAssistantMqttService', () => {
   it('HA birth "online" resets discovery and re-publishes last warnings', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -213,7 +213,7 @@ describe('HomeAssistantMqttService', () => {
   it('HA birth "online" does not re-publish when no previous warnings', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -237,7 +237,7 @@ describe('HomeAssistantMqttService', () => {
   it('HA birth with payload other than "online" does nothing', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;
@@ -262,7 +262,7 @@ describe('HomeAssistantMqttService', () => {
   it('state payload is published with retain true', async () => {
     jest.resetModules();
 
-    const {HomeAssistantMqttService} = await import('../../src/services/HomeAssistantMqttService');
+    const {HomeAssistantMqttService} = await import('../../src/infrastructure/mqtt/HomeAssistantMqttService');
     const service = new HomeAssistantMqttService();
     const mqtt = makeMqttClient();
     (service as any).mqttClient = mqtt;

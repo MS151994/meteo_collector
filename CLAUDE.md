@@ -101,7 +101,7 @@ Env is validated at startup by `envalid`. Add new variables to the appropriate s
 
 Access via `import Env from '../infrastructure/env/Env'` — never `process.env` directly.
 
-Key variables: `WARNINGS_TERRITORY`, `WARNINGS_CRON_SCHEDULE`, `ENABLE_WARNINGS_CRON`, `ENABLE_HA_MQTT`, `MQTT_URL`, `EVENT_GATEWAY`, `API_PORT`.
+Key variables: `WARNINGS_TERRITORY`, `WARNINGS_CRON_SCHEDULE`, `ENABLE_WARNINGS_CRON`, `ENABLE_HA_MQTT`, `MQTT_URL`, `EVENT_GATEWAY`, `API_PORT`, `REDIS_URL`, `REDIS_USERNAME`, `REDIS_PASSWORD`.
 
 ## Testing
 

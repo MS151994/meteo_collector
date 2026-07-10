@@ -4,7 +4,7 @@ import {LoggerService} from '../infrastructure/logger/LoggerService';
 import {WeatherApplication} from './WeatherApplication';
 import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import Env from '../infrastructure/env/Env';
-import {HomeAssistantMqttService} from '../services/HomeAssistantMqttService';
+import {HomeAssistantMqttService} from '../infrastructure/mqtt/HomeAssistantMqttService';
 import {WarningsHistoryService} from '../services/WarningsHistoryService';
 import {WarningNotifier} from '../services/WarningNotifier';
 

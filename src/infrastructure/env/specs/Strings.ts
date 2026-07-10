@@ -15,6 +15,8 @@ export default {
     default: '',
     desc: 'Redis URL for shared state (e.g. redis://redis:6379); empty = in-memory dedup only',
   }),
+  REDIS_USERNAME: str({default: '', desc: 'Redis username (empty = use URL / no ACL user)'}),
+  REDIS_PASSWORD: str({default: '', desc: 'Redis password (empty = use URL / no auth)'}),
 
   MQTT_URL: str({default: '', desc: 'MQTT broker URL (e.g. mqtt://emqx:1883)'}),
   MQTT_USERNAME: str({devDefault: 'meteocollector-client', desc: 'MQTT username'}),

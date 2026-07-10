@@ -1,17 +1,11 @@
 import {inject, injectable} from 'inversify';
-import Env from '../infrastructure/env/Env';
-import {LoggerService} from '../infrastructure/logger/LoggerService';
-import {TYPES} from '../infrastructure/ioc/Types';
-import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
-import * as pack from '../../package.json';
-import {MqttClient} from '../infrastructure/mqtt/MqttClient';
-import {
-  haDiscoveryTopic,
-  mqttDeviceId,
-  mqttStatusTopic,
-  mqttUniqueId,
-  mqttWarningsTopic,
-} from '../infrastructure/mqtt/topics';
+import Env from '../env/Env';
+import {LoggerService} from '../logger/LoggerService';
+import {TYPES} from '../ioc/Types';
+import {WarningsResponsePayload} from '../../payloads/WarningsResponsePayload';
+import * as pack from '../../../package.json';
+import {MqttClient} from './MqttClient';
+import {haDiscoveryTopic, mqttDeviceId, mqttStatusTopic, mqttUniqueId, mqttWarningsTopic} from './topics';
 
 @injectable()
 export class HomeAssistantMqttService {

@@ -3,7 +3,7 @@ import {TYPES} from '../infrastructure/ioc/Types';
 import {LoggerService} from '../infrastructure/logger/LoggerService';
 import Env from '../infrastructure/env/Env';
 import cron from 'node-cron';
-import {HomeAssistantMqttService} from '../services/HomeAssistantMqttService';
+import {HomeAssistantMqttService} from '../infrastructure/mqtt/HomeAssistantMqttService';
 import {WarningsPipeline} from '../application/WarningsPipeline';
 
 @injectable()

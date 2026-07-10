@@ -10,7 +10,7 @@ import {TimeHelper} from '../../helper/TimeHelper';
 import {WeatherApplication} from '../../application/WeatherApplication';
 import {WarningsPipeline} from '../../application/WarningsPipeline';
 import {StylesPlugin} from '../../plugin/StylesPlugin';
-import {HomeAssistantMqttService} from '../../services/HomeAssistantMqttService';
+import {HomeAssistantMqttService} from '../mqtt/HomeAssistantMqttService';
 import {MqttClient} from '../mqtt/MqttClient';
 import {RedisClient} from '../redis/RedisClient';
 import {WarningsHistoryService} from '../../services/WarningsHistoryService';

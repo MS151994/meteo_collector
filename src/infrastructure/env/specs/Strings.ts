@@ -11,6 +11,11 @@ export default {
   PASSWORD: str({default: '', desc: 'Default password'}),
   EVENT_GATEWAY: str({default: '', devDefault: 'localhost', desc: 'Event url'}),
 
+  REDIS_URL: str({
+    default: '',
+    desc: 'Redis URL for shared state (e.g. redis://redis:6379); empty = in-memory dedup only',
+  }),
+
   MQTT_URL: str({default: '', desc: 'MQTT broker URL (e.g. mqtt://emqx:1883)'}),
   MQTT_USERNAME: str({devDefault: 'meteocollector-client', desc: 'MQTT username'}),
   MQTT_PASSWORD: str({devDefault: 'meteocollector-client', desc: 'MQTT password'}),

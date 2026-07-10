@@ -6,11 +6,11 @@ import {WarningsResponsePayload} from '../payloads/WarningsResponsePayload';
 import {WarningPayload} from '../payloads/WarningPayload';
 import Env from '../infrastructure/env/Env';
 import cron from 'node-cron';
-import {promises as fs} from 'fs';
-import path from 'path';
 import {HttpClient} from '../infrastructure/http/HttpClient';
 import {PostWarningEventHttpQuery} from '../infrastructure/http/query/PostWarningEventHttpQuery';
 import {HomeAssistantMqttService} from './HomeAssistantMqttService';
+import {RedisClient} from '../infrastructure/redis/RedisClient';
+import {WarningsHistoryService} from './WarningsHistoryService';
 
 type EventSeverity = 'warning';
 
@@ -28,8 +28,14 @@ export class WarningsCronService {
   @inject(TYPES.HomeAssistantMqttService)
   private readonly haMqttService: HomeAssistantMqttService;
 
+  @inject(TYPES.RedisClient)
+  private readonly redis: RedisClient;
+
+  @inject(TYPES.WarningsHistoryService)
+  private readonly history: WarningsHistoryService;
+
   private readonly prefix: string = '[Meteorologic Collector]';
-  private readonly signatureFilePath: string = path.resolve('data/last_warnings_signature.json');
+  private readonly signatureKey: string = `meteo:signature:${Env.WARNINGS_TERRITORY}`;
   private lastWarningsSignature: string | null = null;
 
   public start(): void {
@@ -103,6 +109,8 @@ export class WarningsCronService {
       await this.persistSignature(signature);
       return;
     }
+    // History is independent of the event-gateway dedup: record every poll, per-warning NX handles duplicates.
+    await this.history.record(warnings);
     if (signature === this.lastWarningsSignature) {
       return;
     }
@@ -150,15 +158,10 @@ export class WarningsCronService {
 
   private async loadLastSignature(): Promise<string | null> {
     try {
-      const raw = await fs.readFile(this.signatureFilePath, 'utf8');
-      const parsed = JSON.parse(raw) as {signature?: string};
-      return parsed.signature ?? null;
-    } catch (error: any) {
-      if (error?.code === 'ENOENT') {
-        return null;
-      }
+      return await this.redis.get(this.signatureKey);
+    } catch (error) {
       this.logger.warning(
-        `${this.prefix} failed to read signature file: ${error instanceof Error ? error.message : String(error)}`,
+        `${this.prefix} failed to read signature from redis: ${error instanceof Error ? error.message : String(error)}`,
       );
       return null;
     }
@@ -166,11 +169,10 @@ export class WarningsCronService {
 
   private async persistSignature(signature: string): Promise<void> {
     try {
-      await fs.mkdir(path.dirname(this.signatureFilePath), {recursive: true});
-      await fs.writeFile(this.signatureFilePath, JSON.stringify({signature}), 'utf8');
+      await this.redis.set(this.signatureKey, signature);
     } catch (error) {
       this.logger.warning(
-        `${this.prefix} failed to persist signature: ${error instanceof Error ? error.message : String(error)}`,
+        `${this.prefix} failed to persist signature to redis: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

@@ -3,6 +3,7 @@ import {createExpressServer, useContainer} from 'routing-controllers';
 import {container} from './infrastructure/ioc/Container';
 import {MeteorologicController} from './controllers/MeteorologicController';
 import {HealthController} from './controllers/HealthController';
+import {HistoryController} from './controllers/HistoryController';
 import {TYPES} from './infrastructure/ioc/Types';
 import * as pack from '../package.json';
 import Env from './infrastructure/env/Env';
@@ -17,7 +18,7 @@ const logger: LoggerService = container.get<LoggerService>(TYPES.LoggerService);
 const warningsCronService: WarningsCronService = container.get<WarningsCronService>(TYPES.WarningsCronService);
 
 const app = createExpressServer({
-  controllers: [MeteorologicController, HealthController],
+  controllers: [MeteorologicController, HealthController, HistoryController],
   middlewares: [AsyncLocalStorageService],
   defaults: {
     undefinedResultCode: 404,

@@ -14,13 +14,7 @@ jest.mock('got', () => {
   };
 });
 
-jest.mock('fs', () => ({
-  promises: {
-    readFile: jest.fn(),
-    writeFile: jest.fn(),
-    mkdir: jest.fn(),
-  },
-}));
+const buildRedisStub = () => ({get: jest.fn().mockResolvedValue(null), set: jest.fn().mockResolvedValue(undefined)});
 
 import {IMGWWarningModel} from '../../src/models/WarningModel';
 import {WarningPayload} from '../../src/payloads/WarningPayload';
@@ -66,14 +60,12 @@ describe('WarningsCronService', () => {
 
     const cron = await import('node-cron');
     const schedule = cron.schedule as unknown as jest.Mock;
-    const fs = await import('fs');
-    const readFile = fs.promises.readFile as unknown as jest.Mock;
-    readFile.mockRejectedValue({code: 'ENOENT'});
 
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    (service as any).redis = buildRedisStub();
     (service as any).weatherApplication = {getWarnings: jest.fn().mockResolvedValue(buildEmptyWarningsResponse())};
     (service as any).httpClient = {execute: jest.fn()};
 
@@ -85,14 +77,12 @@ describe('WarningsCronService', () => {
   it('persists signature and skips sending when warnings are empty', async () => {
     jest.resetModules();
 
-    const fs = await import('fs');
-    const mkdir = fs.promises.mkdir as unknown as jest.Mock;
-    const writeFile = fs.promises.writeFile as unknown as jest.Mock;
-
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    const redis = buildRedisStub();
+    (service as any).redis = redis;
     (service as any).weatherApplication = {getWarnings: jest.fn()};
     const execute = jest.fn();
     (service as any).httpClient = {execute};
@@ -100,20 +90,20 @@ describe('WarningsCronService', () => {
     await (service as any).processWarnings(buildEmptyWarningsResponse(), false);
 
     expect(execute).not.toHaveBeenCalled();
-    expect(mkdir).toHaveBeenCalled();
-    expect(writeFile).toHaveBeenCalled();
+    expect(redis.set).toHaveBeenCalled();
   });
 
   it('sends event once when warnings change', async () => {
     jest.resetModules();
 
-    const fs = await import('fs');
-    const writeFile = fs.promises.writeFile as unknown as jest.Mock;
-
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    const redis = buildRedisStub();
+    (service as any).redis = redis;
+    const history = {record: jest.fn().mockResolvedValue(undefined)};
+    (service as any).history = history;
     (service as any).weatherApplication = {getWarnings: jest.fn()};
     const execute = jest.fn().mockResolvedValue({});
     (service as any).httpClient = {execute};
@@ -124,7 +114,8 @@ describe('WarningsCronService', () => {
     await (service as any).processWarnings(warnings, false);
 
     expect(execute).toHaveBeenCalledTimes(1);
-    expect(writeFile).toHaveBeenCalledTimes(1);
+    expect(redis.set).toHaveBeenCalledTimes(1);
+    expect(history.record).toHaveBeenCalledTimes(2);
   });
 
   it('skips sending when credentials are missing', async () => {
@@ -136,7 +127,9 @@ describe('WarningsCronService', () => {
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    (service as any).redis = buildRedisStub();
+    (service as any).history = {record: jest.fn().mockResolvedValue(undefined)};
     (service as any).weatherApplication = {getWarnings: jest.fn()};
     const execute = jest.fn();
     (service as any).httpClient = {execute};
@@ -149,13 +142,13 @@ describe('WarningsCronService', () => {
   it('avoids sending when signature is unchanged', async () => {
     jest.resetModules();
 
-    const fs = await import('fs');
-    const writeFile = fs.promises.writeFile as unknown as jest.Mock;
-
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    const redis = buildRedisStub();
+    (service as any).redis = redis;
+    (service as any).history = {record: jest.fn().mockResolvedValue(undefined)};
     (service as any).weatherApplication = {getWarnings: jest.fn()};
     const execute = jest.fn().mockResolvedValue({});
     (service as any).httpClient = {execute};
@@ -163,54 +156,54 @@ describe('WarningsCronService', () => {
     const warnings = buildWarningsResponse();
 
     await (service as any).processWarnings(warnings, false);
-    writeFile.mockClear();
+    redis.set.mockClear();
     execute.mockClear();
 
     await (service as any).processWarnings(warnings, false);
 
     expect(execute).not.toHaveBeenCalled();
-    expect(writeFile).not.toHaveBeenCalled();
+    expect(redis.set).not.toHaveBeenCalled();
   });
 
   it('does not throw when event gateway request fails', async () => {
     jest.resetModules();
 
-    const fs = await import('fs');
-    const writeFile = fs.promises.writeFile as unknown as jest.Mock;
-
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    const redis = buildRedisStub();
+    (service as any).redis = redis;
+    (service as any).history = {record: jest.fn().mockResolvedValue(undefined)};
     (service as any).weatherApplication = {getWarnings: jest.fn()};
     const execute = jest.fn().mockRejectedValue(new Error('ECONNREFUSED'));
     (service as any).httpClient = {execute};
 
     await expect((service as any).processWarnings(buildWarningsResponse(), false)).resolves.toBeUndefined();
-    expect(writeFile).not.toHaveBeenCalled();
+    expect(redis.set).not.toHaveBeenCalled();
   });
 
   it('loads last signature from storage when requested', async () => {
     jest.resetModules();
 
-    const fs = await import('fs');
-    const readFile = fs.promises.readFile as unknown as jest.Mock;
-
     const {WarningsCronService} = await import('../../src/services/WarningsCronService');
 
     const service = new WarningsCronService();
-    (service as any).logger = {info: jest.fn(), warn: jest.fn(), error: jest.fn()};
+    (service as any).logger = {info: jest.fn(), warn: jest.fn(), warning: jest.fn(), error: jest.fn()};
+    const redis = buildRedisStub();
+    (service as any).redis = redis;
+    (service as any).history = {record: jest.fn().mockResolvedValue(undefined)};
     (service as any).weatherApplication = {getWarnings: jest.fn()};
     const execute = jest.fn();
     (service as any).httpClient = {execute};
 
     const warnings = buildWarningsResponse();
     const signature = (service as any).buildWarningsSignature(warnings);
-    readFile.mockResolvedValue(JSON.stringify({signature}));
+    redis.get.mockResolvedValue(signature);
 
     await (service as any).processWarnings(warnings, true);
 
-    expect(readFile).toHaveBeenCalled();
+    expect(redis.get).toHaveBeenCalled();
     expect(execute).not.toHaveBeenCalled();
   });
 });

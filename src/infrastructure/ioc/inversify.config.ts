@@ -10,6 +10,8 @@ import {WeatherApplication} from '../../application/WeatherApplication';
 import {StylesPlugin} from '../../plugin/StylesPlugin';
 import {HomeAssistantMqttService} from '../../services/HomeAssistantMqttService';
 import {MqttClient} from '../mqtt/MqttClient';
+import {RedisClient} from '../redis/RedisClient';
+import {WarningsHistoryService} from '../../services/WarningsHistoryService';
 import {LoggerService} from '../logger/LoggerService';
 import {AsyncLocalStorageService} from '../middleware/AsyncLocalStorageService';
 
@@ -21,6 +23,7 @@ export const bind = (container: Container): void => {
   //Services
   container.bind<WarningsService>(TYPES.WeatherService).to(WarningsService).inSingletonScope();
   container.bind<WarningsCronService>(TYPES.WarningsCronService).to(WarningsCronService).inSingletonScope();
+  container.bind<WarningsHistoryService>(TYPES.WarningsHistoryService).to(WarningsHistoryService).inSingletonScope();
   container
     .bind<HomeAssistantMqttService>(TYPES.HomeAssistantMqttService)
     .to(HomeAssistantMqttService)
@@ -32,6 +35,7 @@ export const bind = (container: Container): void => {
   //Http Client
   container.bind<HttpClient>(TYPES.HttpClient).to(HttpClient).inSingletonScope();
   container.bind<MqttClient>(TYPES.MqttClient).to(MqttClient).inSingletonScope();
+  container.bind<RedisClient>(TYPES.RedisClient).to(RedisClient).inSingletonScope();
   //Logger
   container.bind<AsyncLocalStorageService>(AsyncLocalStorageService).toSelf().inSingletonScope();
   container.bind<AsyncLocalStorageService>(TYPES.AsyncLocalStorageService).toService(AsyncLocalStorageService);

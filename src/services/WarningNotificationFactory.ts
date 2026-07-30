@@ -1,4 +1,6 @@
-import {injectable} from 'inversify';
+import {inject, injectable} from 'inversify';
+import {TYPES} from '../infrastructure/ioc/Types';
+import {TimeHelper} from '../helper/TimeHelper';
 import {WarningPayload} from '../payloads/WarningPayload';
 import {NotificationPayload} from '../payloads/NotificationPayload';
 import {SeverityType} from '../infrastructure/enum/SeverityType';
@@ -7,6 +9,9 @@ import {LabelType} from '../infrastructure/enum/LabelType';
 
 @injectable()
 export class WarningNotificationFactory {
+  @inject(TYPES.TimeHelper)
+  private readonly timeHelper: TimeHelper;
+
   public fromWarning(warning: WarningPayload): NotificationPayload {
     return new NotificationPayload({
       type: 'weather',
@@ -26,7 +31,7 @@ export class WarningNotificationFactory {
     }
     const published = warning.getPublishDate();
     if (published) {
-      parts.push(`opublikowano: ${published.toISOString()}`);
+      parts.push(`opublikowano: ${this.timeHelper.formatLocal(published)}`);
     }
 
     return parts.join(' | ');

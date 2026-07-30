@@ -1,13 +1,11 @@
 // @ts-check
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
 import unusedImports from 'eslint-plugin-unused-imports';
 
 export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.recommended, {
   ignores: ['node_modules', 'build', '*.js'],
   plugins: {
-    '@stylistic/ts': stylisticTs,
     'unused-imports': unusedImports,
   },
   rules: {
@@ -21,17 +19,6 @@ export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.r
     '@typescript-eslint/no-inferrable-types': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,
     '@typescript-eslint/explicit-member-accessibility': 'error',
-    '@stylistic/ts/type-annotation-spacing': [
-      'error',
-      {
-        before: false,
-        after: true,
-        overrides: {
-          arrow: {before: true, after: false},
-        },
-      },
-    ],
-    '@stylistic/ts/space-infix-ops': 'error',
     'keyword-spacing': 'error',
     'object-curly-spacing': ['error', 'never'],
     'comma-spacing': ['error', {before: false, after: true}],

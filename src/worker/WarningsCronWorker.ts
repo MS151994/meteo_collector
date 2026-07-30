@@ -20,12 +20,16 @@ export class WarningsCronWorker {
   private readonly prefix: string = '[Meteorologic Collector]';
 
   public start(): void {
-    cron.schedule(Env.WARNINGS_CRON_SCHEDULE, (): void => {
-      void this.pipeline.run();
-    });
+    cron.schedule(
+      Env.WARNINGS_CRON_SCHEDULE,
+      (): void => {
+        void this.pipeline.run();
+      },
+      {timezone: Env.CRON_JOB_TIMEZONE},
+    );
 
     this.logger.info(
-      `${this.prefix} cron scheduled: ${Env.WARNINGS_CRON_SCHEDULE} with territory ${Env.WARNINGS_TERRITORY}`,
+      `${this.prefix} cron scheduled: ${Env.WARNINGS_CRON_SCHEDULE} (${Env.CRON_JOB_TIMEZONE}) with territory ${Env.WARNINGS_TERRITORY}`,
     );
 
     if (Env.ENABLE_HA_MQTT) {

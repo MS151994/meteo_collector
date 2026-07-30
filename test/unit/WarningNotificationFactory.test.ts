@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import {IMGWWarningModel} from '../../src/models/WarningModel';
 import {WarningPayload} from '../../src/payloads/WarningPayload';
 import {WarningNotificationFactory} from '../../src/services/WarningNotificationFactory';
+import {TimeHelper} from '../../src/helper/TimeHelper';
 import {SeverityType} from '../../src/infrastructure/enum/SeverityType';
 import {PriorityType} from '../../src/infrastructure/enum/PriorityType';
 import {LabelType} from '../../src/infrastructure/enum/LabelType';
@@ -28,6 +29,7 @@ const buildWarning = (overrides: Record<string, unknown> = {}): WarningPayload =
 
 describe('WarningNotificationFactory', () => {
   const factory = new WarningNotificationFactory();
+  (factory as any).timeHelper = new TimeHelper();
 
   it('maps core fields from a single warning', () => {
     const payload = factory.fromWarning(buildWarning());

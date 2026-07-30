@@ -1,4 +1,5 @@
 import {injectable} from 'inversify';
+import Env from '../infrastructure/env/Env';
 
 @injectable()
 export class TimeHelper {
@@ -25,5 +26,13 @@ export class TimeHelper {
       return diff;
     }
     return diff;
+  }
+
+  public formatLocal(date: Date): string {
+    return date.toLocaleString('pl-PL', {
+      timeZone: Env.CRON_JOB_TIMEZONE,
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
   }
 }

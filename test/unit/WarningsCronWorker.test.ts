@@ -29,7 +29,7 @@ describe('WarningsCronWorker', () => {
     const {worker, pipeline} = await buildWorker();
     worker.start();
 
-    expect(schedule).toHaveBeenCalledWith('*/5 * * * *', expect.any(Function));
+    expect(schedule).toHaveBeenCalledWith('*/5 * * * *', expect.any(Function), {timezone: 'Europe/Warsaw'});
     // initial run kicked immediately
     expect(pipeline.run).toHaveBeenCalledTimes(1);
 

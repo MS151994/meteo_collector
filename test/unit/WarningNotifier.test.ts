@@ -32,12 +32,15 @@ const buildNotifier = async (redis: {get: jest.Mock; setNx: jest.Mock}, notify: 
   const {WarningNotifier} = await import('../../src/services/WarningNotifier');
   const {WarningSignatureHelper} = await import('../../src/helper/WarningSignatureHelper');
   const {WarningNotificationFactory} = await import('../../src/services/WarningNotificationFactory');
+  const {TimeHelper} = await import('../../src/helper/TimeHelper');
 
   const notifier = new WarningNotifier();
   (notifier as any).logger = {info: jest.fn(), warning: jest.fn(), error: jest.fn()};
   (notifier as any).redis = redis;
   (notifier as any).signatureHelper = new WarningSignatureHelper();
-  (notifier as any).factory = new WarningNotificationFactory();
+  const factory = new WarningNotificationFactory();
+  (factory as any).timeHelper = new TimeHelper();
+  (notifier as any).factory = factory;
   (notifier as any).notificationService = {notify};
   return notifier;
 };

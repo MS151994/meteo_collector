@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ---
+
+## [1.6.0] - 2026.07.30
+
+### Added
+
+- `CRON_JOB_TIMEZONE` env variable (default `Europe/Warsaw`) used by the warnings cron schedule and date formatting.
+- `TimeHelper.formatLocal()` for local date/time formatting.
+
+### Changed
+
+- Notification description shows the publication date as local time (`29.07.2026, 12:18`) instead of a raw ISO string.
+
 ## [1.5.0] - 2026.07.11
 
 ### Added

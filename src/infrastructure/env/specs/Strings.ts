@@ -7,6 +7,7 @@ export default {
   ICON_MIME_TYPE: str({default: '.png', desc: 'icon extension'}),
   WARNINGS_TERRITORY: str({devDefault: 'zduńskowolski', desc: 'Default warnings territory'}),
   WARNINGS_CRON_SCHEDULE: str({devDefault: '*/3 * * * *', desc: 'Cron schedule for warnings polling'}),
+  CRON_JOB_TIMEZONE: str({default: 'Europe/Warsaw', desc: 'Timezone for cron schedule and displayed dates'}),
   USER: str({default: '', desc: 'Default user'}),
   PASSWORD: str({default: '', desc: 'Default password'}),
   EVENT_GATEWAY: str({default: '', devDefault: 'localhost', desc: 'Event url'}),
